@@ -21,11 +21,11 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="First commit">
-      <change afterPath="$PROJECT_DIR$/src/cpu.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/opcodes.rs" afterDir="false" />
+    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Implement all addressing modes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cpu.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpu.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/opcodes.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/opcodes.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,11 +75,6 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
   </component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
@@ -98,7 +93,9 @@
       <workItem from="1606758964417" duration="140000" />
       <workItem from="1606759124852" duration="1656000" />
       <workItem from="1606761028029" duration="325000" />
-      <workItem from="1606761372043" duration="14031000" />
+      <workItem from="1606761372043" duration="21964000" />
+      <workItem from="1607034392572" duration="30000" />
+      <workItem from="1607110302155" duration="306000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1606756223933</created>
@@ -107,7 +104,14 @@
       <option name="project" value="LOCAL" />
       <updated>1606756223933</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Implement all addressing modes">
+      <created>1606777126234</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1606777126234</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -127,36 +131,45 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="First commit" />
+    <MESSAGE value="Implement all addressing modes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement all addressing modes" />
   </component>
   <component name="WindowStateProjectService">
     <state x="1378" y="397" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1606763961651">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
     <state x="1378" y="397" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.38.2560.1402@0.38.2560.1402" timestamp="1606763961651" />
-    <state width="689" height="1224" key="GridCell.Tab.0.bottom" timestamp="1606777053377">
+    <state x="1778" y="534" width="401" height="246" key="Github.ShareDialog" timestamp="1606777150618">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state width="689" height="1224" key="GridCell.Tab.0.bottom/0.38.2560.1402@0.38.2560.1402" timestamp="1606777053377" />
-    <state width="689" height="1224" key="GridCell.Tab.0.center" timestamp="1606777053376">
+    <state x="1778" y="534" width="401" height="246" key="Github.ShareDialog/0.38.2560.1402@0.38.2560.1402" timestamp="1606777150618" />
+    <state width="689" height="1224" key="GridCell.Tab.0.bottom" timestamp="1606824989025">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state width="689" height="1224" key="GridCell.Tab.0.center/0.38.2560.1402@0.38.2560.1402" timestamp="1606777053376" />
-    <state width="689" height="1224" key="GridCell.Tab.0.left" timestamp="1606777053375">
+    <state width="689" height="1224" key="GridCell.Tab.0.bottom/0.38.2560.1402@0.38.2560.1402" timestamp="1606824989025" />
+    <state width="689" height="1224" key="GridCell.Tab.0.center" timestamp="1606824989025">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state width="689" height="1224" key="GridCell.Tab.0.left/0.38.2560.1402@0.38.2560.1402" timestamp="1606777053375" />
-    <state width="689" height="1224" key="GridCell.Tab.0.right" timestamp="1606777053376">
+    <state width="689" height="1224" key="GridCell.Tab.0.center/0.38.2560.1402@0.38.2560.1402" timestamp="1606824989025" />
+    <state width="689" height="1224" key="GridCell.Tab.0.left" timestamp="1606824989024">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state width="689" height="1224" key="GridCell.Tab.0.right/0.38.2560.1402@0.38.2560.1402" timestamp="1606777053376" />
+    <state width="689" height="1224" key="GridCell.Tab.0.left/0.38.2560.1402@0.38.2560.1402" timestamp="1606824989024" />
+    <state width="689" height="1224" key="GridCell.Tab.0.right" timestamp="1606824989025">
+      <screen x="0" y="38" width="2560" height="1402" />
+    </state>
+    <state width="689" height="1224" key="GridCell.Tab.0.right/0.38.2560.1402@0.38.2560.1402" timestamp="1606824989025" />
     <state x="1702" y="650" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1606760928455">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
     <state x="1702" y="650" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.38.2560.1402@0.38.2560.1402" timestamp="1606760928455" />
-    <state x="1583" y="357" width="672" height="678" key="search.everywhere.popup" timestamp="1606770109946">
+    <state x="1612" y="438" width="615" height="602" key="find.popup" timestamp="1606782421637">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state x="1583" y="357" width="672" height="678" key="search.everywhere.popup/0.38.2560.1402@0.38.2560.1402" timestamp="1606770109946" />
+    <state x="1612" y="438" width="615" height="602" key="find.popup/0.38.2560.1402@0.38.2560.1402" timestamp="1606782421637" />
+    <state x="1583" y="357" width="672" height="678" key="search.everywhere.popup" timestamp="1606782569013">
+      <screen x="0" y="38" width="2560" height="1402" />
+    </state>
+    <state x="1583" y="357" width="672" height="678" key="search.everywhere.popup/0.38.2560.1402@0.38.2560.1402" timestamp="1606782569013" />
   </component>
 </project>

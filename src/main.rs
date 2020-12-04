@@ -1,10 +1,16 @@
+use crate::cpu::CPU;
+
 mod cpu;
 mod opcodes;
 
 fn main() {
-    let mut x: u16 = 100;
-    let y: u8 = 255;
-    // let y: i8 = -1;
-    x = x.wrapping_add(y as i8 as u16);
-    println!("{}", x);
+    let mut cpu = CPU::new([
+        0x69, 255,
+        0x69, 10,
+        0x85, 0xA,
+    ].to_vec());
+    cpu.execute_next_instruction();
+    cpu.execute_next_instruction();
+    cpu.execute_next_instruction();
+    dbg!(cpu);
 }

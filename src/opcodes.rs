@@ -1,5 +1,5 @@
-use crate::opcodes::Instruction::NOP;
-use crate::opcodes::AddressingMode::Implicit;
+use crate::opcodes::Instruction::{NOP, ADC, STA};
+use crate::opcodes::AddressingMode::{Implicit, Immediate, ZeroPage};
 
 pub const OPCODES: [(Instruction, AddressingMode, u8); 256] = [
     // 00
@@ -35,7 +35,7 @@ pub const OPCODES: [(Instruction, AddressingMode, u8); 256] = [
     // 60
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (ADC, Immediate, 2), (NOP, Implicit, 1), (NOP, Implicit, 1),
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
     // 70
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
@@ -44,7 +44,7 @@ pub const OPCODES: [(Instruction, AddressingMode, u8); 256] = [
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
     // 80
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (STA, ZeroPage, 3), (NOP, Implicit, 1), (NOP, Implicit, 1),
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
     // 90
