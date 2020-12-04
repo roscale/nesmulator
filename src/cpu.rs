@@ -1,19 +1,20 @@
 use std::num::Wrapping;
 
 use crate::opcodes::{AddressingMode, Instruction, OPCODES};
+use crate::flags::CPUFlags;
 
 #[derive(Debug)]
 pub struct CPU {
-    a: u8,
-    x: u8,
-    y: u8,
-    pc: u16,
-    s: u8,
-    p: u8,
-    ram: [u8; 0x800],
-    cartridge: Vec<u8>,
+    pub a: u8,
+    pub x: u8,
+    pub y: u8,
+    pub pc: u16,
+    pub s: u8,
+    pub flags: CPUFlags,
+    pub ram: [u8; 0x800],
+    pub cartridge: Vec<u8>,
 
-    instruction_target: u16,
+    pub instruction_target: u16,
 }
 
 impl CPU {
@@ -24,7 +25,7 @@ impl CPU {
             y: 0,
             pc: 0,
             s: 0,
-            p: 0,
+            flags: CPUFlags::new(),
             ram: [0; 0x800],
             cartridge,
             instruction_target: 0,
@@ -37,7 +38,7 @@ impl CPU {
         let &(
             instruction,
             addressing_mode,
-            cycles
+            _cycles
         ) = &OPCODES[op as usize];
 
         self.compute_instruction_target(addressing_mode);
@@ -78,10 +79,10 @@ impl CPU {
                 self.pc += 1;
                 // We must cast it to i8 first because the negative sign bit
                 // must be repeated when we make it 16 bit.
-                let new_pc = self.pc.wrapping_add(offset as i8 as u16);
-                self.instruction_target = new_pc;
+                let absolute_offset = self.pc.wrapping_add(offset as i8 as u16);
+                self.instruction_target = absolute_offset;
 
-                if page_of(self.pc) != page_of(new_pc) {
+                if page_of(self.pc) != page_of(absolute_offset) {
                     1
                 } else {
                     0
@@ -175,14 +176,18 @@ impl CPU {
                 } else {
                     self.read(self.instruction_target)
                 };
-                let carry = self.get_carry_flag() as u8;
-                let will_overflow = self.a.checked_add(value)
+                let carry = self.flags.carry as u8;
+                let will_carry = self.a.checked_add(value)
                     .and_then(|x| x.checked_add(carry))
                     .is_none();
+
+                let old_a = self.a;
                 self.a = (Wrapping(self.a) + Wrapping(value) + Wrapping(carry)).0;
-                self.set_carry_flag(will_overflow);
-                self.modify_zero_flag(self.a);
-                self.modify_negative_flag(self.a);
+
+                self.flags.carry = will_carry;
+                self.flags.overflow = (!(old_a ^ value) & (old_a ^ self.a) & 0x80) != 0;
+                self.flags.modify_zero_flag(self.a);
+                self.flags.modify_negative_flag(self.a);
                 true
             },
             Instruction::AND => false,
@@ -216,22 +221,22 @@ impl CPU {
             Instruction::LDA => {
                 let value = self.read(self.instruction_target);
                 self.a = value;
-                self.modify_zero_flag(value);
-                self.modify_negative_flag(value);
+                self.flags.modify_zero_flag(value);
+                self.flags.modify_negative_flag(value);
                 true
             },
             Instruction::LDX => {
                 let value = self.read(self.instruction_target);
                 self.x = value;
-                self.modify_zero_flag(value);
-                self.modify_negative_flag(value);
+                self.flags.modify_zero_flag(value);
+                self.flags.modify_negative_flag(value);
                 true
             },
             Instruction::LDY => {
                 let value = self.read(self.instruction_target);
                 self.y = value;
-                self.modify_zero_flag(value);
-                self.modify_negative_flag(value);
+                self.flags.modify_zero_flag(value);
+                self.flags.modify_negative_flag(value);
                 true
             },
             Instruction::LSR => false,
@@ -288,34 +293,6 @@ impl CPU {
             0x4018..=0x401F => unimplemented!("APU and I/O functionality that is normally disabled"),
             0x4020..=0xFFFF => unimplemented!("Cartridge space"),
         }
-    }
-
-    #[inline]
-    pub fn modify_zero_flag(&mut self, value: u8) {
-        self.set_flag(1 << 1, value == 0);
-    }
-
-    #[inline]
-    pub fn modify_negative_flag(&mut self, value: u8) {
-        self.set_flag(1 << 7, value & 0b1000_0000 != 0);
-    }
-
-    #[inline]
-    pub fn get_carry_flag(&mut self) -> bool {
-        self.p & 0b0000_0001 != 0
-    }
-
-    #[inline]
-    pub fn set_carry_flag(&mut self, set: bool) {
-        self.set_flag(1 << 0, set);
-    }
-
-    pub fn set_flag(&mut self, mask: u8, set: bool) {
-        let mut flags = self.p & !mask; // clear the flag
-        if set {
-            flags |= mask;
-        };
-        self.p = flags;
     }
 }
 
