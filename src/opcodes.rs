@@ -1,27 +1,27 @@
-use crate::opcodes::AddressingMode::{Absolute, AbsoluteIndexedX, AbsoluteIndexedY, Immediate, Implicit, IndexedIndirect, IndirectIndexed, ZeroPage, ZeroPageIndexedX};
-use crate::opcodes::Instruction::{ADC, NOP, STA};
+use crate::opcodes::AddressingMode::{Absolute, AbsoluteIndexedX, AbsoluteIndexedY, Immediate, Implicit, IndexedIndirect, IndirectIndexed, ZeroPage, ZeroPageIndexedX, Accumulator};
+use crate::opcodes::Instruction::{ADC, AND, NOP, STA, ASL};
 
 pub const OPCODES: [(Instruction, AddressingMode, u8); 256] = [
     // 00
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (NOP, Implicit, 1), (ASL, ZeroPage, 5), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (NOP, Implicit, 1), (ASL, Accumulator, 2), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (NOP, Implicit, 1), (ASL, Absolute, 6), (NOP, Implicit, 1),
     // 10
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (NOP, Implicit, 1), (ASL, ZeroPageIndexedX, 6), (NOP, Implicit, 1),
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (NOP, Implicit, 1), (ASL, AbsoluteIndexedX, 7), (NOP, Implicit, 1),
     // 20
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (AND, IndexedIndirect, 6), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (AND, ZeroPage, 3), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (AND, Immediate, 2), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (AND, Absolute, 4), (NOP, Implicit, 1), (NOP, Implicit, 1),
     // 30
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
-    (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (AND, IndirectIndexed, 5), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (AND, ZeroPageIndexedX, 4), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (AND, AbsoluteIndexedY, 4), (NOP, Implicit, 1), (NOP, Implicit, 1),
+    (NOP, Implicit, 1), (AND, AbsoluteIndexedX, 4), (NOP, Implicit, 1), (NOP, Implicit, 1),
     // 40
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),
     (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1), (NOP, Implicit, 1),

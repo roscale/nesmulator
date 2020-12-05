@@ -1,7 +1,7 @@
 use std::num::Wrapping;
 
-use crate::opcodes::{AddressingMode, Instruction, OPCODES};
 use crate::flags::CPUFlags;
+use crate::opcodes::{AddressingMode, Instruction, OPCODES};
 
 #[derive(Debug)]
 pub struct CPU {
@@ -190,34 +190,214 @@ impl CPU {
                 self.flags.modify_negative_flag(self.a);
                 true
             },
-            Instruction::AND => false,
-            Instruction::ASL => false,
-            Instruction::BCC => false,
-            Instruction::BCS => false,
-            Instruction::BEQ => false,
-            Instruction::BIT => false,
-            Instruction::BMI => false,
-            Instruction::BNE => false,
-            Instruction::BPL => false,
-            Instruction::BRK => false,
-            Instruction::BVC => false,
-            Instruction::BVS => false,
-            Instruction::CLC => false,
-            Instruction::CLD => false,
-            Instruction::CLI => false,
-            Instruction::CLV => false,
-            Instruction::CMP => false,
-            Instruction::CPX => false,
-            Instruction::CPY => false,
-            Instruction::DEC => false,
-            Instruction::DEX => false,
-            Instruction::DEY => false,
-            Instruction::EOR => false,
-            Instruction::INC => false,
-            Instruction::INX => false,
-            Instruction::INY => false,
-            Instruction::JMP => false,
-            Instruction::JSR => false,
+            Instruction::AND => {
+                let value = if let AddressingMode::Immediate = addressing_mode {
+                    self.instruction_target as u8
+                } else {
+                    self.read(self.instruction_target)
+                };
+                self.a &= value;
+
+                self.flags.modify_zero_flag(self.a);
+                self.flags.modify_zero_flag(self.a);
+                true
+            },
+            Instruction::ASL => {
+                // TODO
+                if let AddressingMode::Accumulator = addressing_mode {
+                    self.flags.carry = (self.a >> 7) != 0;
+                    self.a <<= 1;
+                    self.flags.modify_zero_flag(self.a);
+                } else {
+                    // self.flags.carry =
+                }
+                false
+            },
+            Instruction::BCC => {
+                if !self.flags.carry {
+                    self.pc = self.instruction_target;
+                }
+                // TODO: Cycles
+                true
+            },
+            Instruction::BCS => {
+                if self.flags.carry {
+                    self.pc = self.instruction_target;
+                }
+                // TODO: Cycles
+                true
+            },
+            Instruction::BEQ => {
+                if self.flags.zero {
+                    self.pc = self.instruction_target;
+                }
+                // TODO: Cycles
+                true
+            },
+            Instruction::BIT => {
+                let value = self.read(self.instruction_target);
+                self.flags.modify_zero_flag(self.a & value);
+                self.flags.modify_negative_flag(value);
+                self.flags.overflow = ((value & 0b0100_0000) >> 6) != 0;
+                false
+            },
+            Instruction::BMI => {
+                if self.flags.negative {
+                    self.pc = self.instruction_target;
+                }
+                // TODO: Cycles
+                true
+            },
+            Instruction::BNE => {
+                if !self.flags.zero {
+                    self.pc = self.instruction_target;
+                }
+                // TODO: Cycles
+                true
+            },
+            Instruction::BPL => {
+                if !self.flags.negative {
+                    self.pc = self.instruction_target;
+                }
+                // TODO: Cycles
+                true
+            },
+            Instruction::BRK => {
+                self.push_u16(self.pc);
+                self.push_u8(self.flags.to_byte());
+
+                // Load the IRQ interrupt
+                let lsb = self.read(0xFFFE);
+                let msb = self.read(0xFFFF);
+                self.pc = ((msb as u16) << 8) | (lsb as u16);
+
+                self.flags.break_command = 1;
+                false
+            },
+            Instruction::BVC => {
+                if !self.flags.overflow {
+                    self.pc = self.instruction_target;
+                }
+                // TODO: Cycles
+                true
+            },
+            Instruction::BVS => {
+                if self.flags.overflow {
+                    self.pc = self.instruction_target;
+                }
+                // TODO: Cycles
+                true
+            },
+            Instruction::CLC => {
+                self.flags.carry = false;
+                false
+            },
+            Instruction::CLD => {
+                self.flags._decimal_mode = false;
+                false
+            },
+            Instruction::CLI => {
+                self.flags.interrupt_disable = false;
+                false
+            },
+            Instruction::CLV => {
+                self.flags.overflow = false;
+                false
+            },
+            Instruction::CMP => {
+                let value = if let AddressingMode::Immediate = addressing_mode {
+                    self.instruction_target as u8
+                } else {
+                    self.read(self.instruction_target)
+                };
+                self.flags.carry = self.a >= value;
+                self.flags.zero = self.a == value;
+                self.flags.modify_negative_flag(self.a.wrapping_sub(value));
+                true
+            },
+            Instruction::CPX => {
+                let value = if let AddressingMode::Immediate = addressing_mode {
+                    self.instruction_target as u8
+                } else {
+                    self.read(self.instruction_target)
+                };
+                self.flags.carry = self.x >= value;
+                self.flags.zero = self.x == value;
+                self.flags.modify_negative_flag(self.x.wrapping_sub(value));
+                false
+            },
+            Instruction::CPY => {
+                let value = if let AddressingMode::Immediate = addressing_mode {
+                    self.instruction_target as u8
+                } else {
+                    self.read(self.instruction_target)
+                };
+                self.flags.carry = self.y >= value;
+                self.flags.zero = self.y == value;
+                self.flags.modify_negative_flag(self.y.wrapping_sub(value));
+                false
+            },
+            Instruction::DEC => {
+                let value = self.read(self.instruction_target);
+                let result = value.wrapping_sub(1);
+                self.write(self.instruction_target, result);
+                self.flags.modify_zero_flag(result);
+                self.flags.modify_negative_flag(result);
+                false
+            },
+            Instruction::DEX => {
+                self.x = self.x.wrapping_sub(1);
+                self.flags.modify_zero_flag(self.x);
+                self.flags.modify_negative_flag(self.x);
+                false
+            },
+            Instruction::DEY => {
+                self.y = self.y.wrapping_sub(1);
+                self.flags.modify_zero_flag(self.y);
+                self.flags.modify_negative_flag(self.y);
+                false
+            },
+            Instruction::EOR => {
+                let value = if let AddressingMode::Immediate = addressing_mode {
+                    self.instruction_target as u8
+                } else {
+                    self.read(self.instruction_target)
+                };
+                self.a ^= value;
+                self.flags.modify_zero_flag(self.a);
+                self.flags.modify_negative_flag(self.a);
+                true
+            },
+            Instruction::INC => {
+                let value = self.read(self.instruction_target);
+                let result = value.wrapping_add(1);
+                self.write(self.instruction_target, result);
+                self.flags.modify_zero_flag(result);
+                self.flags.modify_negative_flag(result);
+                false
+            },
+            Instruction::INX => {
+                self.x = self.x.wrapping_add(1);
+                self.flags.modify_zero_flag(self.x);
+                self.flags.modify_negative_flag(self.x);
+                false
+            },
+            Instruction::INY => {
+                self.y = self.y.wrapping_add(1);
+                self.flags.modify_zero_flag(self.y);
+                self.flags.modify_negative_flag(self.y);
+                false
+            },
+            Instruction::JMP => {
+                self.pc = self.instruction_target;
+                false
+            },
+            Instruction::JSR => {
+                let pc_minus_one = self.pc.wrapping_sub(1);
+                self.push_u16(pc_minus_one);
+                self.pc = self.instruction_target;
+                false
+            },
             Instruction::LDA => {
                 let value = self.read(self.instruction_target);
                 self.a = value;
@@ -239,7 +419,22 @@ impl CPU {
                 self.flags.modify_negative_flag(value);
                 true
             },
-            Instruction::LSR => false,
+            Instruction::LSR => {
+                if let AddressingMode::Accumulator = addressing_mode {
+                    self.flags.carry = (self.a & 0x01) != 0;
+                    self.a >>= 1;
+                    self.flags.modify_zero_flag(self.a);
+                    self.flags.modify_negative_flag(self.a);
+                } else {
+                    let value = self.read(self.instruction_target);
+                    self.flags.carry = (value & 0x01) != 0;
+                    let result = value >> 1;
+                    self.write(self.instruction_target, result);
+                    self.flags.modify_zero_flag(result);
+                    self.flags.modify_negative_flag(result);
+                }
+                false
+            },
             Instruction::NOP => false,
             Instruction::ORA => false,
             Instruction::PHA => false,
@@ -293,6 +488,18 @@ impl CPU {
             0x4018..=0x401F => unimplemented!("APU and I/O functionality that is normally disabled"),
             0x4020..=0xFFFF => unimplemented!("Cartridge space"),
         }
+    }
+
+    pub fn push_u8(&mut self, value: u8) {
+        self.write(self.s as u16, value);
+        self.s += 1;
+    }
+
+    pub fn push_u16(&mut self, value: u16) {
+        self.write(self.s as u16, (value & 0x00FF) as u8);
+        self.s += 1;
+        self.write(self.s as u16, ((value & 0xFF00) >> 8) as u8);
+        self.s += 1;
     }
 }
 

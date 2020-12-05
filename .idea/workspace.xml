@@ -21,11 +21,10 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Implemented a few instructions and rearranged some functions">
-      <change afterPath="$PROJECT_DIR$/src/flags.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tests.rs" afterDir="false" />
+    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Test all the addressing modes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cpu.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpu.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/flags.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/flags.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/opcodes.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/opcodes.rs" afterDir="false" />
     </list>
@@ -119,7 +118,7 @@
       <workItem from="1606761028029" duration="325000" />
       <workItem from="1606761372043" duration="21964000" />
       <workItem from="1607034392572" duration="30000" />
-      <workItem from="1607110302155" duration="14591000" />
+      <workItem from="1607110302155" duration="29587000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1606756223933</created>
@@ -142,7 +141,14 @@
       <option name="project" value="LOCAL" />
       <updated>1607110714080</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Test all the addressing modes">
+      <created>1607125066221</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1607125066221</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -164,7 +170,8 @@
     <MESSAGE value="First commit" />
     <MESSAGE value="Implement all addressing modes" />
     <MESSAGE value="Implemented a few instructions and rearranged some functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented a few instructions and rearranged some functions" />
+    <MESSAGE value="Test all the addressing modes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Test all the addressing modes" />
   </component>
   <component name="WindowStateProjectService">
     <state x="1378" y="397" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607110734818">
@@ -187,22 +194,22 @@
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
     <state x="1778" y="534" width="401" height="246" key="Github.ShareDialog/0.38.2560.1402@0.38.2560.1402" timestamp="1606777150618" />
-    <state width="887" height="1224" key="GridCell.Tab.0.bottom" timestamp="1607124974444">
+    <state width="621" height="1224" key="GridCell.Tab.0.bottom" timestamp="1607207537210">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state width="887" height="1224" key="GridCell.Tab.0.bottom/0.38.2560.1402@0.38.2560.1402" timestamp="1607124974444" />
-    <state width="887" height="1224" key="GridCell.Tab.0.center" timestamp="1607124974444">
+    <state width="621" height="1224" key="GridCell.Tab.0.bottom/0.38.2560.1402@0.38.2560.1402" timestamp="1607207537210" />
+    <state width="621" height="1224" key="GridCell.Tab.0.center" timestamp="1607207537209">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state width="887" height="1224" key="GridCell.Tab.0.center/0.38.2560.1402@0.38.2560.1402" timestamp="1607124974444" />
-    <state width="887" height="1224" key="GridCell.Tab.0.left" timestamp="1607124974443">
+    <state width="621" height="1224" key="GridCell.Tab.0.center/0.38.2560.1402@0.38.2560.1402" timestamp="1607207537209" />
+    <state width="621" height="1224" key="GridCell.Tab.0.left" timestamp="1607207537209">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state width="887" height="1224" key="GridCell.Tab.0.left/0.38.2560.1402@0.38.2560.1402" timestamp="1607124974443" />
-    <state width="887" height="1224" key="GridCell.Tab.0.right" timestamp="1607124974444">
+    <state width="621" height="1224" key="GridCell.Tab.0.left/0.38.2560.1402@0.38.2560.1402" timestamp="1607207537209" />
+    <state width="621" height="1224" key="GridCell.Tab.0.right" timestamp="1607207537210">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state width="887" height="1224" key="GridCell.Tab.0.right/0.38.2560.1402@0.38.2560.1402" timestamp="1607124974444" />
+    <state width="621" height="1224" key="GridCell.Tab.0.right/0.38.2560.1402@0.38.2560.1402" timestamp="1607207537210" />
     <state width="2510" height="316" key="GridCell.Tab.1.bottom" timestamp="1607120532176">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
@@ -223,14 +230,14 @@
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
     <state x="766" y="373" key="SettingsEditor/0.38.2560.1402@0.38.2560.1402" timestamp="1607110652062" />
-    <state x="880" y="470" key="Vcs.Push.Dialog.v2" timestamp="1607110716707">
+    <state x="880" y="470" key="Vcs.Push.Dialog.v2" timestamp="1607125069128">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state x="880" y="470" key="Vcs.Push.Dialog.v2/0.38.2560.1402@0.38.2560.1402" timestamp="1607110716707" />
-    <state x="1702" y="650" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1606760928455">
+    <state x="880" y="470" key="Vcs.Push.Dialog.v2/0.38.2560.1402@0.38.2560.1402" timestamp="1607125069128" />
+    <state x="1702" y="650" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1607206193570">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state x="1702" y="650" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.38.2560.1402@0.38.2560.1402" timestamp="1606760928455" />
+    <state x="1702" y="650" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.38.2560.1402@0.38.2560.1402" timestamp="1607206193570" />
     <state x="605" y="241" width="1240" height="673" key="dock-window-1" timestamp="1607122916397">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
@@ -239,19 +246,9 @@
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
     <state x="1612" y="438" width="615" height="602" key="find.popup/0.38.2560.1402@0.38.2560.1402" timestamp="1606782421637" />
-    <state x="1583" y="357" width="672" height="678" key="search.everywhere.popup" timestamp="1607122334669">
+    <state x="1583" y="357" width="672" height="678" key="search.everywhere.popup" timestamp="1607202901920">
       <screen x="0" y="38" width="2560" height="1402" />
     </state>
-    <state x="1583" y="357" width="672" height="678" key="search.everywhere.popup/0.38.2560.1402@0.38.2560.1402" timestamp="1607122334669" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/cpu.rs</url>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <state x="1583" y="357" width="672" height="678" key="search.everywhere.popup/0.38.2560.1402@0.38.2560.1402" timestamp="1607202901920" />
   </component>
 </project>
