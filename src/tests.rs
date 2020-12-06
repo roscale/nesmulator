@@ -153,8 +153,17 @@ mod tests {
     fn adc() {
         let mut cpu = CPU::new([
             0x69, 1,
-            0x69, 1
+            0x69, 1,
+            0x69, 1,
         ].to_vec());
+
+        cpu.a = 0;
+        cpu.execute_next_instruction();
+        assert_eq!(cpu.a, 1);
+        assert!(!cpu.flags.carry);
+        assert!(!cpu.flags.zero);
+        assert!(!cpu.flags.overflow);
+        assert!(!cpu.flags.negative);
 
         cpu.a = 127;
         cpu.execute_next_instruction();

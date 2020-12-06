@@ -2,6 +2,7 @@ use std::num::Wrapping;
 
 use crate::flags::CPUFlags;
 use crate::opcodes::{AddressingMode, Instruction, OPCODES};
+use crate::util::{BitOperations, page_of};
 
 #[derive(Debug)]
 pub struct CPU {
@@ -81,7 +82,6 @@ impl CPU {
                 // must be repeated when we make it 16 bit.
                 let absolute_offset = self.pc.wrapping_add(offset as i8 as u16);
                 self.instruction_target = absolute_offset;
-
                 if page_of(self.pc) != page_of(absolute_offset) {
                     1
                 } else {
@@ -93,7 +93,7 @@ impl CPU {
                 self.pc += 1;
                 let msb = self.cartridge[self.pc as usize];
                 self.pc += 1;
-                let addr = ((msb as u16) << 8) | (lsb as u16);
+                let addr = u16::from_le_bytes([lsb, msb]);
                 self.instruction_target = addr;
                 0
             },
@@ -102,7 +102,7 @@ impl CPU {
                 self.pc += 1;
                 let msb = self.cartridge[self.pc as usize];
                 self.pc += 1;
-                let addr = ((msb as u16) << 8) | (lsb as u16);
+                let addr = u16::from_le_bytes([lsb, msb]);
                 let old_addr = addr;
                 let addr = Wrapping(addr) + Wrapping(self.x as u16);
                 self.instruction_target = addr.0;
@@ -117,7 +117,7 @@ impl CPU {
                 self.pc += 1;
                 let msb = self.cartridge[self.pc as usize];
                 self.pc += 1;
-                let addr = ((msb as u16) << 8) | (lsb as u16);
+                let addr = u16::from_le_bytes([lsb, msb]);
                 let old_addr = addr;
                 let addr = Wrapping(addr) + Wrapping(self.y as u16);
                 self.instruction_target = addr.0;
@@ -132,11 +132,11 @@ impl CPU {
                 self.pc += 1;
                 let msb = self.cartridge[self.pc as usize];
                 self.pc += 1;
-                let addr = ((msb as u16) << 8) | (lsb as u16);
+                let addr = u16::from_le_bytes([lsb, msb]);
 
                 let lsb = self.read(addr);
                 let msb = self.read(addr + 1);
-                let addr = ((msb as u16) << 8) | (lsb as u16);
+                let addr = u16::from_le_bytes([lsb, msb]);
                 self.instruction_target = addr;
                 0
             },
@@ -145,7 +145,7 @@ impl CPU {
                 self.pc += 1;
                 let lsb = self.read((Wrapping(addr) + Wrapping(self.x)).0 as u16);
                 let msb = self.read((Wrapping(addr) + Wrapping(self.x) + Wrapping(1)).0 as u16);
-                let addr = ((msb as u16) << 8) | (lsb as u16);
+                let addr = u16::from_le_bytes([lsb, msb]);
                 self.instruction_target = addr;
                 0
             },
@@ -155,7 +155,7 @@ impl CPU {
                 let old_addr = addr;
                 let lsb = self.read(addr as u16);
                 let msb = self.read((Wrapping(addr) + Wrapping(1)).0 as u16);
-                let addr = ((msb as u16) << 8) | (lsb as u16);
+                let addr = u16::from_le_bytes([lsb, msb]);
 
                 let addr = Wrapping(addr) + Wrapping(self.y as u16);
                 self.instruction_target = addr.0;
@@ -182,10 +182,11 @@ impl CPU {
                     .is_none();
 
                 let old_a = self.a;
-                self.a = (Wrapping(self.a) + Wrapping(value) + Wrapping(carry)).0;
+                self.a = self.a.wrapping_add(value).wrapping_add(carry);
 
                 self.flags.carry = will_carry;
-                self.flags.overflow = (!(old_a ^ value) & (old_a ^ self.a) & 0x80) != 0;
+                self.flags.overflow = old_a.get_bit(7) == value.get_bit(7)
+                    && old_a.get_bit(7) != self.a.get_bit(7);
                 self.flags.modify_zero_flag(self.a);
                 self.flags.modify_negative_flag(self.a);
                 true
@@ -199,17 +200,22 @@ impl CPU {
                 self.a &= value;
 
                 self.flags.modify_zero_flag(self.a);
-                self.flags.modify_zero_flag(self.a);
+                self.flags.modify_negative_flag(self.a);
                 true
             },
             Instruction::ASL => {
-                // TODO
                 if let AddressingMode::Accumulator = addressing_mode {
-                    self.flags.carry = (self.a >> 7) != 0;
+                    self.flags.carry = self.a.get_bit(7);
                     self.a <<= 1;
                     self.flags.modify_zero_flag(self.a);
+                    self.flags.modify_negative_flag(self.a);
                 } else {
-                    // self.flags.carry =
+                    let mut value = self.read(self.instruction_target);
+                    self.flags.carry = value.get_bit(7);
+                    value <<= 1;
+                    self.write(self.instruction_target, value);
+                    self.flags.modify_zero_flag(value);
+                    self.flags.modify_negative_flag(value);
                 }
                 false
             },
@@ -269,7 +275,7 @@ impl CPU {
                 // Load the IRQ interrupt
                 let lsb = self.read(0xFFFE);
                 let msb = self.read(0xFFFF);
-                self.pc = ((msb as u16) << 8) | (lsb as u16);
+                self.pc = u16::from_le_bytes([lsb, msb]);
 
                 self.flags.break_command = 1;
                 false
@@ -293,7 +299,7 @@ impl CPU {
                 false
             },
             Instruction::CLD => {
-                self.flags._decimal_mode = false;
+                self.flags.decimal_mode = false;
                 false
             },
             Instruction::CLI => {
@@ -436,19 +442,97 @@ impl CPU {
                 false
             },
             Instruction::NOP => false,
-            Instruction::ORA => false,
-            Instruction::PHA => false,
-            Instruction::PHP => false,
-            Instruction::PLA => false,
-            Instruction::PLP => false,
-            Instruction::ROL => false,
-            Instruction::ROR => false,
-            Instruction::RTI => false,
-            Instruction::RTS => false,
-            Instruction::SBC => false,
-            Instruction::SEC => false,
-            Instruction::SED => false,
-            Instruction::SEI => false,
+            Instruction::ORA => {
+                let value = if let AddressingMode::Immediate = addressing_mode {
+                    self.instruction_target as u8
+                } else {
+                    self.read(self.instruction_target)
+                };
+                self.a |= value;
+                self.flags.modify_zero_flag(self.a);
+                self.flags.modify_negative_flag(self.a);
+                true
+            },
+            Instruction::PHA => {
+                self.push_u8(self.a);
+                false
+            },
+            Instruction::PHP => {
+                self.push_u8(self.flags.to_byte());
+                false
+            },
+            Instruction::PLA => {
+                self.a = self.pull_u8();
+                self.flags.modify_zero_flag(self.a);
+                self.flags.modify_negative_flag(self.a);
+                false
+            },
+            Instruction::PLP => {
+                self.flags = CPUFlags::from_byte(self.pull_u8());
+                false
+            },
+            Instruction::ROL => {
+                if let AddressingMode::Accumulator = addressing_mode {
+                    let new_carry = self.a.get_bit(7);
+                    self.a <<= 1;
+                    self.a.set_bit(0, self.flags.carry);
+                    self.flags.carry = new_carry;
+                    self.flags.modify_zero_flag(self.a);
+                    self.flags.modify_negative_flag(self.a);
+                } else {
+                    let mut value = self.read(self.instruction_target);
+                    let new_carry = value.get_bit(7);
+                    value <<= 1;
+                    value.set_bit(0, self.flags.carry);
+                    self.write(self.instruction_target, value);
+                    self.flags.carry = new_carry;
+                    self.flags.modify_zero_flag(value);
+                    self.flags.modify_negative_flag(value);
+                }
+                false
+            },
+            Instruction::ROR => {
+                if let AddressingMode::Accumulator = addressing_mode {
+                    let new_carry = self.a.get_bit(0);
+                    self.a >>= 1;
+                    self.a.set_bit(7, self.flags.carry);
+                    self.flags.carry = new_carry;
+                    self.flags.modify_zero_flag(self.a);
+                    self.flags.modify_negative_flag(self.a);
+                } else {
+                    let mut value = self.read(self.instruction_target);
+                    let new_carry = value.get_bit(0);
+                    value >>= 1;
+                    value.set_bit(7, self.flags.carry);
+                    self.write(self.instruction_target, value);
+                    self.flags.carry = new_carry;
+                    self.flags.modify_zero_flag(value);
+                    self.flags.modify_negative_flag(value);
+                }
+                false
+            },
+            Instruction::RTI => {
+                self.flags = CPUFlags::from_byte(self.pull_u8());
+                self.pc = self.pull_u16();
+                false
+            },
+            Instruction::RTS => {
+                self.pc = self.pull_u16() + 1;
+                false
+            },
+            Instruction::SBC => false, // TODO
+            Instruction::SEC => {
+                self.flags.carry = true;
+                false
+            },
+            Instruction::SED => {
+                self.flags.decimal_mode = true;
+                false
+            },
+            Instruction::SEI => {
+                self.flags.interrupt_disable = true;
+                false
+            },
             Instruction::STA => {
                 self.write(self.instruction_target, self.a);
                 false
@@ -461,12 +545,40 @@ impl CPU {
                 self.write(self.instruction_target, self.y);
                 false
             },
-            Instruction::TAX => false,
-            Instruction::TAY => false,
-            Instruction::TSX => false,
-            Instruction::TXA => false,
-            Instruction::TXS => false,
-            Instruction::TYA => false,
+            Instruction::TAX => {
+                self.x = self.a;
+                self.flags.modify_zero_flag(self.x);
+                self.flags.modify_negative_flag(self.x);
+                false
+            },
+            Instruction::TAY => {
+                self.y = self.a;
+                self.flags.modify_zero_flag(self.y);
+                self.flags.modify_negative_flag(self.y);
+                false
+            },
+            Instruction::TSX => {
+                self.x = self.s;
+                self.flags.modify_zero_flag(self.x);
+                self.flags.modify_negative_flag(self.x);
+                false
+            },
+            Instruction::TXA => {
+                self.a = self.x;
+                self.flags.modify_zero_flag(self.a);
+                self.flags.modify_negative_flag(self.a);
+                false
+            },
+            Instruction::TXS => {
+                self.s = self.x;
+                false
+            },
+            Instruction::TYA => {
+                self.a = self.y;
+                self.flags.modify_zero_flag(self.a);
+                self.flags.modify_negative_flag(self.a);
+                false
+            },
         }
     }
 
@@ -496,14 +608,19 @@ impl CPU {
     }
 
     pub fn push_u16(&mut self, value: u16) {
-        self.write(self.s as u16, (value & 0x00FF) as u8);
-        self.s += 1;
-        self.write(self.s as u16, ((value & 0xFF00) >> 8) as u8);
-        self.s += 1;
+        let [lsb, msb] = value.to_le_bytes();
+        self.push_u8(lsb);
+        self.push_u8(msb);
     }
-}
 
-#[inline]
-pub fn page_of(address: u16) -> u8 {
-    (address >> 8) as u8
+    pub fn pull_u8(&mut self) -> u8 {
+        self.s -= 1;
+        self.read(self.s as u16)
+    }
+
+    pub fn pull_u16(&mut self) -> u16 {
+        let msb = self.pull_u8();
+        let lsb = self.pull_u8();
+        u16::from_le_bytes([lsb, msb])
+    }
 }

@@ -2,6 +2,7 @@ mod cpu;
 mod opcodes;
 mod tests;
 mod flags;
+mod util;
 
 fn main() {
     let a = 255 as u8;
