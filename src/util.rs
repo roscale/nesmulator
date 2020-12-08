@@ -9,12 +9,15 @@ pub trait BitOperations {
 }
 
 impl BitOperations for u8 {
+    #[inline]
     fn get_bit(&self, index: u8) -> bool {
         (self & (1 << index)) != 0
     }
 
+    #[inline]
     fn set_bit(&mut self, index: u8, value: bool) {
         let clear_bit = *self & !(1 << index);
-        *self = clear_bit | ((value as u8) << index);
+        let set_bit = clear_bit | ((value as u8) << index);
+        *self = set_bit;
     }
 }

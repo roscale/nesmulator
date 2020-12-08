@@ -56,7 +56,7 @@ mod tests {
             cartridge.to_vec()
         });
         cpu.pc = 250;
-        assert_eq!(cpu.compute_instruction_target(AddressingMode::Relative), 1);
+        assert_eq!(cpu.compute_instruction_target(AddressingMode::Relative), 2);
         assert_eq!(cpu.instruction_target, 250 + 127 + 1);
         assert_eq!(cpu.pc, 251);
     }

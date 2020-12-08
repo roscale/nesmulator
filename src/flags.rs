@@ -1,3 +1,5 @@
+use crate::util::BitOperations;
+
 #[derive(Debug)]
 pub struct CPUFlags {
     pub carry: bool,
@@ -22,40 +24,33 @@ impl CPUFlags {
         }
     }
 
-    #[inline]
-    pub fn modify_zero_flag(&mut self, value: u8) {
-        self.zero = value == 0;
-    }
-
-    #[inline]
-    pub fn modify_negative_flag(&mut self, value: u8) {
-        self.negative = (value & 0b1000_0000) != 0;
-    }
-
     pub fn to_byte(&self) -> u8 {
-        ((self.carry as u8) << 0) |
-            ((self.zero as u8) << 1) |
-            ((self.interrupt_disable as u8) << 2) |
-            ((self.decimal_mode as u8) << 3) |
-            ((self.break_command & 0x01) << 4) |
-            ((self.break_command & 0x02) << 4) |
-            ((self.overflow as u8) << 6) |
-            ((self.negative as u8) << 7)
+        let mut result = 0;
+        result.set_bit(0, self.carry);
+        result.set_bit(1, self.zero);
+        result.set_bit(2, self.interrupt_disable);
+        result.set_bit(3, self.decimal_mode);
+        result.set_bit(4, self.break_command.get_bit(0));
+        result.set_bit(5, self.break_command.get_bit(1));
+        result.set_bit(6, self.overflow);
+        result.set_bit(7, self.negative);
+        result
     }
 
     pub fn from_byte(byte: u8) -> Self {
         Self {
-            carry: (byte & (1 << 0)) != 0,
-            zero: (byte & (1 << 1)) != 0,
-            interrupt_disable: (byte & (1 << 2)) != 0,
-            decimal_mode: (byte & (1 << 3)) != 0,
+            carry: byte.get_bit(0),
+            zero: byte.get_bit(1),
+            interrupt_disable: byte.get_bit(2),
+            decimal_mode: byte.get_bit(3),
             break_command: {
-                let mut break_command = ((byte & (1 << 4)) != 0) as u8;
-                break_command |= (((byte & (1 << 5)) != 0) as u8) << 1;
+                let mut break_command = 0;
+                break_command.set_bit(0, byte.get_bit(4));
+                break_command.set_bit(1, byte.get_bit(5));
                 break_command
             },
-            overflow: (byte & (1 << 6)) != 0,
-            negative: (byte & (1 << 7)) != 0,
+            overflow: byte.get_bit(6),
+            negative: byte.get_bit(7),
         }
     }
 }
