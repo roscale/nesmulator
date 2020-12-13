@@ -435,21 +435,33 @@ impl CPU {
                 false
             },
             Instruction::LDA => {
-                let value = self.read(self.instruction_target);
+                let value = if let AddressingMode::Immediate = addressing_mode {
+                    self.instruction_target as u8
+                } else {
+                    self.read(self.instruction_target)
+                };
                 self.a = value;
                 self.flags.zero = value == 0;
                 self.flags.negative = value.get_bit(7);
                 true
             },
             Instruction::LDX => {
-                let value = self.read(self.instruction_target);
+                let value = if let AddressingMode::Immediate = addressing_mode {
+                    self.instruction_target as u8
+                } else {
+                    self.read(self.instruction_target)
+                };
                 self.x = value;
                 self.flags.zero = value == 0;
                 self.flags.negative = value.get_bit(7);
                 true
             },
             Instruction::LDY => {
-                let value = self.read(self.instruction_target);
+                let value = if let AddressingMode::Immediate = addressing_mode {
+                    self.instruction_target as u8
+                } else {
+                    self.read(self.instruction_target)
+                };
                 self.y = value;
                 self.flags.zero = value == 0;
                 self.flags.negative = value.get_bit(7);

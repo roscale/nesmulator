@@ -14,19 +14,18 @@
   </component>
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
     </configurations>
   </component>
   <component name="CargoProjects">
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Implemented almost all the instructions">
+    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Finish instruction implementation &amp; inline some functions&#10;&#10;The opcode table is not completed yet.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cpu.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpu.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/flags.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/flags.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/util.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/util.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/opcodes.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/opcodes.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +55,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
@@ -94,16 +94,6 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Cargo.Test tests::tests" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
@@ -128,7 +118,11 @@
       <workItem from="1607271975567" duration="16000" />
       <workItem from="1607272211685" duration="6201000" />
       <workItem from="1607279719464" duration="13872000" />
-      <workItem from="1607378616812" duration="5581000" />
+      <workItem from="1607378616812" duration="5856000" />
+      <workItem from="1607637751533" duration="3416000" />
+      <workItem from="1607869970018" duration="1000" />
+      <workItem from="1607900305809" duration="32000" />
+      <workItem from="1607900359926" duration="90000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1606756223933</created>
@@ -172,7 +166,14 @@
       <option name="project" value="LOCAL" />
       <updated>1607299133661</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Finish instruction implementation &amp; inline some functions&#10;&#10;The opcode table is not completed yet.">
+      <created>1607430155518</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1607430155518</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -197,106 +198,7 @@
     <MESSAGE value="Test all the addressing modes" />
     <MESSAGE value="Implement over half of the instructions&#10;&#10;No tests are written and I must still fill in the opcodes table." />
     <MESSAGE value="Implemented almost all the instructions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented almost all the instructions" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="1378" y="397" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607110734818">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="1378" y="397" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.38.2560.1402@0.38.2560.1402" timestamp="1607110734818" />
-    <state x="100" y="138" width="2360" height="1202" key="#com.intellij.execution.junit2.states.ComparisonFailureState$DiffDialog" timestamp="1607119241441">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="100" y="138" width="2360" height="1202" key="#com.intellij.execution.junit2.states.ComparisonFailureState$DiffDialog/0.38.2560.1402@0.38.2560.1402" timestamp="1607119241441" />
-    <state x="1733" y="457" key="#com.intellij.ide.util.MemberChooser" timestamp="1607276551687">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="1733" y="457" key="#com.intellij.ide.util.MemberChooser/0.38.2560.1402@0.38.2560.1402" timestamp="1607276551687" />
-    <state x="1664" y="396" key="#xdebugger.evaluate" timestamp="1607119662170">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="1664" y="396" key="#xdebugger.evaluate/0.38.2560.1402@0.38.2560.1402" timestamp="1607119662170" />
-    <state x="100" y="138" width="2360" height="1202" key="DiffContextDialog" timestamp="1607122020009">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="100" y="138" width="2360" height="1202" key="DiffContextDialog/0.38.2560.1402@0.38.2560.1402" timestamp="1607122020009" />
-    <state x="1778" y="534" width="401" height="246" key="Github.ShareDialog" timestamp="1606777150618">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="1778" y="534" width="401" height="246" key="Github.ShareDialog/0.38.2560.1402@0.38.2560.1402" timestamp="1606777150618" />
-    <state width="784" height="1224" key="GridCell.Tab.0.bottom" timestamp="1607387530498">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state width="608" height="864" key="GridCell.Tab.0.bottom/0.38.1920.1042@0.38.1920.1042" timestamp="1607302152175" />
-    <state width="784" height="1224" key="GridCell.Tab.0.bottom/0.38.2560.1402@0.38.2560.1402" timestamp="1607387530498" />
-    <state width="784" height="1224" key="GridCell.Tab.0.center" timestamp="1607387530498">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state width="608" height="864" key="GridCell.Tab.0.center/0.38.1920.1042@0.38.1920.1042" timestamp="1607302152174" />
-    <state width="784" height="1224" key="GridCell.Tab.0.center/0.38.2560.1402@0.38.2560.1402" timestamp="1607387530498" />
-    <state width="784" height="1224" key="GridCell.Tab.0.left" timestamp="1607387530498">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state width="608" height="864" key="GridCell.Tab.0.left/0.38.1920.1042@0.38.1920.1042" timestamp="1607302152174" />
-    <state width="784" height="1224" key="GridCell.Tab.0.left/0.38.2560.1402@0.38.2560.1402" timestamp="1607387530498" />
-    <state width="784" height="1224" key="GridCell.Tab.0.right" timestamp="1607387530498">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state width="608" height="864" key="GridCell.Tab.0.right/0.38.1920.1042@0.38.1920.1042" timestamp="1607302152175" />
-    <state width="784" height="1224" key="GridCell.Tab.0.right/0.38.2560.1402@0.38.2560.1402" timestamp="1607387530498" />
-    <state width="2510" height="316" key="GridCell.Tab.1.bottom" timestamp="1607257094719">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state width="2510" height="316" key="GridCell.Tab.1.bottom/0.38.2560.1402@0.38.2560.1402" timestamp="1607257094719" />
-    <state width="2510" height="316" key="GridCell.Tab.1.center" timestamp="1607257094718">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state width="2510" height="316" key="GridCell.Tab.1.center/0.38.2560.1402@0.38.2560.1402" timestamp="1607257094718" />
-    <state width="2510" height="316" key="GridCell.Tab.1.left" timestamp="1607257094718">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state width="2510" height="316" key="GridCell.Tab.1.left/0.38.2560.1402@0.38.2560.1402" timestamp="1607257094718" />
-    <state width="2510" height="316" key="GridCell.Tab.1.right" timestamp="1607257094718">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state width="2510" height="316" key="GridCell.Tab.1.right/0.38.2560.1402@0.38.2560.1402" timestamp="1607257094718" />
-    <state x="909" y="432" width="1037" height="731" key="SettingsEditor" timestamp="1607272482867">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="909" y="432" width="1037" height="731" key="SettingsEditor/0.38.2560.1402@0.38.2560.1402" timestamp="1607272482867" />
-    <state x="1649" y="472" width="540" height="540" key="StructurePopup" timestamp="1607273419061">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="1649" y="472" width="540" height="540" key="StructurePopup/0.38.2560.1402@0.38.2560.1402" timestamp="1607273419061" />
-    <state x="880" y="470" key="Vcs.Push.Dialog.v2" timestamp="1607299136185">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="880" y="470" key="Vcs.Push.Dialog.v2/0.38.2560.1402@0.38.2560.1402" timestamp="1607299136185" />
-    <state x="1702" y="650" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1607206193570">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="1702" y="650" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.38.2560.1402@0.38.2560.1402" timestamp="1607206193570" />
-    <state x="605" y="241" width="1240" height="673" key="dock-window-1" timestamp="1607122916397">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="605" y="241" width="1240" height="673" key="dock-window-1/0.38.2560.1402@0.38.2560.1402" timestamp="1607122916397" />
-    <state x="957" y="394" width="925" height="828" key="find.popup" timestamp="1607386439834">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="578" y="216" width="591" height="602" key="find.popup/0.38.1920.1042@0.38.1920.1042" timestamp="1607301436093" />
-    <state x="957" y="394" width="925" height="828" key="find.popup/0.38.2560.1402@0.38.2560.1402" timestamp="1607386439834" />
-    <state width="594" height="158" key="javadoc.popup.new" timestamp="1607387121441">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state width="445" height="117" key="javadoc.popup.new/0.38.1920.1042@0.38.1920.1042" timestamp="1607301654588" />
-    <state width="594" height="158" key="javadoc.popup.new/0.38.2560.1402@0.38.2560.1402" timestamp="1607387121441" />
-    <state x="1584" y="346" width="672" height="678" key="run.anything.popup" timestamp="1607275295476">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="1584" y="346" width="672" height="678" key="run.anything.popup/0.38.2560.1402@0.38.2560.1402" timestamp="1607275295476" />
-    <state x="1583" y="357" width="672" height="678" key="search.everywhere.popup" timestamp="1607275117471">
-      <screen x="0" y="38" width="2560" height="1402" />
-    </state>
-    <state x="1583" y="357" width="672" height="678" key="search.everywhere.popup/0.38.2560.1402@0.38.2560.1402" timestamp="1607275117471" />
+    <MESSAGE value="Finish instruction implementation &amp; inline some functions&#10;&#10;The opcode table is not completed yet." />
+    <option name="LAST_COMMIT_MESSAGE" value="Finish instruction implementation &amp; inline some functions&#10;&#10;The opcode table is not completed yet." />
   </component>
 </project>
