@@ -21,11 +21,13 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Finish instruction implementation &amp; inline some functions&#10;&#10;The opcode table is not completed yet.">
+    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Complete the opcode table">
+      <change afterPath="$PROJECT_DIR$/roms/nestest.nes" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cartridge.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cpu.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpu.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/opcodes.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/opcodes.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/util.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/util.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,11 +60,22 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/roms" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
   </component>
   <component name="RunAnythingCache">
     <option name="myCommands">
@@ -70,6 +83,11 @@
     </option>
   </component>
   <component name="RunManager" selected="Cargo.Run">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Run" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="channel" value="DEFAULT" />
       <option name="command" value="run --package nesmulator --bin nesmulator" />
@@ -94,6 +112,15 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Cargo.Run" />
+      <item itemvalue="Cargo.Test tests::tests" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Cargo.Test tests::tests" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
@@ -122,7 +149,8 @@
       <workItem from="1607637751533" duration="3416000" />
       <workItem from="1607869970018" duration="1000" />
       <workItem from="1607900305809" duration="32000" />
-      <workItem from="1607900359926" duration="90000" />
+      <workItem from="1607900359926" duration="17059000" />
+      <workItem from="1607982456007" duration="936000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1606756223933</created>
@@ -173,7 +201,14 @@
       <option name="project" value="LOCAL" />
       <updated>1607430155518</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Complete the opcode table">
+      <created>1607900495028</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1607900495028</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -199,6 +234,7 @@
     <MESSAGE value="Implement over half of the instructions&#10;&#10;No tests are written and I must still fill in the opcodes table." />
     <MESSAGE value="Implemented almost all the instructions" />
     <MESSAGE value="Finish instruction implementation &amp; inline some functions&#10;&#10;The opcode table is not completed yet." />
-    <option name="LAST_COMMIT_MESSAGE" value="Finish instruction implementation &amp; inline some functions&#10;&#10;The opcode table is not completed yet." />
+    <MESSAGE value="Complete the opcode table" />
+    <option name="LAST_COMMIT_MESSAGE" value="Complete the opcode table" />
   </component>
 </project>

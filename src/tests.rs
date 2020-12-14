@@ -2,6 +2,7 @@
 mod tests {
     use crate::cpu::CPU;
     use crate::opcodes::AddressingMode;
+    use crate::util::BitOperations;
 
     //
     // Addressing modes
@@ -180,5 +181,18 @@ mod tests {
         assert!(cpu.flags.zero);
         assert!(!cpu.flags.overflow);
         assert!(!cpu.flags.negative);
+    }
+
+    #[test]
+    fn bit_operations() {
+        let mut result = 0u16;
+        let a = 0b0101_1111;
+        let b = 0b0000_1010;
+        let mut c = 0b1100_0000;
+        c.set_bits_all(2..=3, true);
+        result.set_bits(0..=3, a.get_bits(4..=7));
+        result.set_bits(4..=7, b.get_bits(0..=3));
+        result.set_bits(8..=15, c.get_bits(0..=7));
+        assert_eq!(result, 0b1100_1100_1010_0101);
     }
 }
