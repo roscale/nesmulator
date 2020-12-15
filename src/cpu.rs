@@ -1,6 +1,7 @@
+use crate::cartridge::Cartridge;
 use crate::flags::CPUFlags;
 use crate::opcodes::{AddressingMode, Instruction, OPCODES};
-use crate::util::{BitOperations, page_of};
+use crate::util::{page_of, BitOperations};
 
 #[derive(Debug)]
 pub struct CPU {
@@ -11,14 +12,14 @@ pub struct CPU {
     pub s: u8,
     pub flags: CPUFlags,
     pub ram: [u8; 0x800],
-    pub cartridge: Vec<u8>,
+    pub cartridge: Cartridge,
 
     pub instruction_target: u16,
     pub cycles_remaining: u8,
 }
 
 impl CPU {
-    pub fn new(cartridge: Vec<u8>) -> Self {
+    pub fn new(cartridge: Cartridge) -> Self {
         Self {
             a: 0,
             x: 0,
@@ -43,13 +44,17 @@ impl CPU {
     }
 
     pub fn execute_next_instruction(&mut self) {
-        let op = self.cartridge[self.pc as usize];
+        let op = self.read(self.pc);
+        print!("self.pc = {:x}", self.pc);
+
+        if self.ram[0] != 0 {
+            println!("BOGUS");
+        }
+
         self.pc += 1;
-        let (
-            instruction,
-            addressing_mode,
-            cycles
-        ) = OPCODES[op as usize];
+        let (instruction, addressing_mode, cycles) = OPCODES[op as usize];
+
+        println!("   OP = {:?}", instruction);
 
         self.cycles_remaining = cycles;
         let additional_cycles = self.compute_instruction_target(addressing_mode);
@@ -67,32 +72,32 @@ impl CPU {
             AddressingMode::Implicit => 0,
             AddressingMode::Accumulator => 0,
             AddressingMode::Immediate => {
-                self.instruction_target = self.cartridge[self.pc as usize] as u16;
+                self.instruction_target = self.read(self.pc) as u16;
                 self.pc += 1;
                 0
-            },
+            }
             AddressingMode::ZeroPage => {
-                self.instruction_target = self.cartridge[self.pc as usize] as u16;
+                self.instruction_target = self.read(self.pc) as u16;
                 self.pc += 1;
                 0
-            },
+            }
             AddressingMode::ZeroPageIndexedX => {
-                let addr = self.cartridge[self.pc as usize];
+                let addr = self.read(self.pc);
                 self.pc += 1;
                 let addr = addr.wrapping_add(self.x);
                 self.instruction_target = addr as u16;
                 0
-            },
+            }
             AddressingMode::ZeroPageIndexedY => {
-                let addr = self.cartridge[self.pc as usize];
+                let addr = self.read(self.pc);
                 self.pc += 1;
                 let addr = addr.wrapping_add(self.y);
                 self.instruction_target = addr as u16;
                 0
-            },
+            }
             // This addressing mode is only used for branching instructions.
             AddressingMode::Relative => {
-                let offset = self.cartridge[self.pc as usize];
+                let offset = self.read(self.pc);
                 self.pc += 1;
                 // We must cast it to i8 first because the negative sign bit
                 // must be repeated when we make it 16 bit.
@@ -103,23 +108,23 @@ impl CPU {
                 } else {
                     0
                 }
-            },
+            }
             AddressingMode::Absolute => {
                 let addr = {
-                    let lsb = self.cartridge[self.pc as usize];
+                    let lsb = self.read(self.pc);
                     self.pc += 1;
-                    let msb = self.cartridge[self.pc as usize];
+                    let msb = self.read(self.pc);
                     self.pc += 1;
                     u16::from_le_bytes([lsb, msb])
                 };
                 self.instruction_target = addr;
                 0
-            },
+            }
             AddressingMode::AbsoluteIndexedX => {
                 let addr = {
-                    let lsb = self.cartridge[self.pc as usize];
+                    let lsb = self.read(self.pc);
                     self.pc += 1;
-                    let msb = self.cartridge[self.pc as usize];
+                    let msb = self.read(self.pc);
                     self.pc += 1;
                     u16::from_le_bytes([lsb, msb])
                 };
@@ -131,12 +136,12 @@ impl CPU {
                 } else {
                     0
                 }
-            },
+            }
             AddressingMode::AbsoluteIndexedY => {
                 let addr = {
-                    let lsb = self.cartridge[self.pc as usize];
+                    let lsb = self.read(self.pc);
                     self.pc += 1;
-                    let msb = self.cartridge[self.pc as usize];
+                    let msb = self.read(self.pc);
                     self.pc += 1;
                     u16::from_le_bytes([lsb, msb])
                 };
@@ -148,12 +153,12 @@ impl CPU {
                 } else {
                     0
                 }
-            },
+            }
             AddressingMode::Indirect => {
                 let addr = {
-                    let lsb = self.cartridge[self.pc as usize];
+                    let lsb = self.read(self.pc);
                     self.pc += 1;
-                    let msb = self.cartridge[self.pc as usize];
+                    let msb = self.read(self.pc);
                     self.pc += 1;
                     u16::from_le_bytes([lsb, msb])
                 };
@@ -164,9 +169,9 @@ impl CPU {
                 };
                 self.instruction_target = addr;
                 0
-            },
+            }
             AddressingMode::IndexedIndirect => {
-                let addr = self.cartridge[self.pc as usize];
+                let addr = self.read(self.pc);
                 self.pc += 1;
                 let addr = {
                     let lsb = self.read(addr.wrapping_add(self.x) as u16);
@@ -175,9 +180,9 @@ impl CPU {
                 };
                 self.instruction_target = addr;
                 0
-            },
+            }
             AddressingMode::IndirectIndexed => {
-                let addr = self.cartridge[self.pc as usize];
+                let addr = self.read(self.pc);
                 self.pc += 1;
                 let old_addr = addr;
                 let addr = {
@@ -192,11 +197,15 @@ impl CPU {
                 } else {
                     0
                 }
-            },
+            }
         }
     }
 
-    pub fn execute_instruction(&mut self, instruction: Instruction, addressing_mode: AddressingMode) -> bool {
+    pub fn execute_instruction(
+        &mut self,
+        instruction: Instruction,
+        addressing_mode: AddressingMode,
+    ) -> bool {
         match instruction {
             Instruction::ADC => {
                 let value = if let AddressingMode::Immediate = addressing_mode {
@@ -205,7 +214,9 @@ impl CPU {
                     self.read(self.instruction_target)
                 };
                 let carry = self.flags.carry as u8;
-                let will_carry = self.a.checked_add(value)
+                let will_carry = self
+                    .a
+                    .checked_add(value)
                     .and_then(|x| x.checked_add(carry))
                     .is_none();
 
@@ -213,12 +224,12 @@ impl CPU {
                 self.a = self.a.wrapping_add(value).wrapping_add(carry);
 
                 self.flags.carry = will_carry;
-                self.flags.overflow = old_a.get_bit(7) == value.get_bit(7)
-                    && old_a.get_bit(7) != self.a.get_bit(7);
+                self.flags.overflow =
+                    old_a.get_bit(7) == value.get_bit(7) && old_a.get_bit(7) != self.a.get_bit(7);
                 self.flags.zero = self.a == 0;
                 self.flags.negative = self.a.get_bit(7);
                 true
-            },
+            }
             Instruction::AND => {
                 let value = if let AddressingMode::Immediate = addressing_mode {
                     self.instruction_target as u8
@@ -230,7 +241,7 @@ impl CPU {
                 self.flags.zero = self.a == 0;
                 self.flags.negative = self.a.get_bit(7);
                 true
-            },
+            }
             Instruction::ASL => {
                 if let AddressingMode::Accumulator = addressing_mode {
                     self.flags.carry = self.a.get_bit(7);
@@ -246,56 +257,56 @@ impl CPU {
                     self.flags.negative = value.get_bit(7);
                 }
                 false
-            },
+            }
             Instruction::BCC => {
                 if !self.flags.carry {
                     self.pc = self.instruction_target;
                     self.cycles_remaining += 1;
                 }
                 true
-            },
+            }
             Instruction::BCS => {
                 if self.flags.carry {
                     self.pc = self.instruction_target;
                     self.cycles_remaining += 1;
                 }
                 true
-            },
+            }
             Instruction::BEQ => {
                 if self.flags.zero {
                     self.pc = self.instruction_target;
                     self.cycles_remaining += 1;
                 }
                 true
-            },
+            }
             Instruction::BIT => {
                 let value = self.read(self.instruction_target);
                 self.flags.zero = (self.a & value) == 0;
                 self.flags.negative = value.get_bit(7);
                 self.flags.overflow = value.get_bit(6);
                 false
-            },
+            }
             Instruction::BMI => {
                 if self.flags.negative {
                     self.pc = self.instruction_target;
                     self.cycles_remaining += 1;
                 }
                 true
-            },
+            }
             Instruction::BNE => {
                 if !self.flags.zero {
                     self.pc = self.instruction_target;
                     self.cycles_remaining += 1;
                 }
                 true
-            },
+            }
             Instruction::BPL => {
                 if !self.flags.negative {
                     self.pc = self.instruction_target;
                     self.cycles_remaining += 1;
                 }
                 true
-            },
+            }
             Instruction::BRK => {
                 self.push_u16(self.pc);
                 self.push_u8(self.flags.to_byte());
@@ -309,37 +320,37 @@ impl CPU {
 
                 self.flags.break_command = 1;
                 false
-            },
+            }
             Instruction::BVC => {
                 if !self.flags.overflow {
                     self.pc = self.instruction_target;
                     self.cycles_remaining += 1;
                 }
                 true
-            },
+            }
             Instruction::BVS => {
                 if self.flags.overflow {
                     self.pc = self.instruction_target;
                     self.cycles_remaining += 1;
                 }
                 true
-            },
+            }
             Instruction::CLC => {
                 self.flags.carry = false;
                 false
-            },
+            }
             Instruction::CLD => {
                 self.flags.decimal_mode = false;
                 false
-            },
+            }
             Instruction::CLI => {
                 self.flags.interrupt_disable = false;
                 false
-            },
+            }
             Instruction::CLV => {
                 self.flags.overflow = false;
                 false
-            },
+            }
             Instruction::CMP => {
                 let value = if let AddressingMode::Immediate = addressing_mode {
                     self.instruction_target as u8
@@ -350,7 +361,7 @@ impl CPU {
                 self.flags.zero = self.a == value;
                 self.flags.negative = self.a.wrapping_sub(value).get_bit(7);
                 true
-            },
+            }
             Instruction::CPX => {
                 let value = if let AddressingMode::Immediate = addressing_mode {
                     self.instruction_target as u8
@@ -361,7 +372,7 @@ impl CPU {
                 self.flags.zero = self.x == value;
                 self.flags.negative = self.x.wrapping_sub(value).get_bit(7);
                 false
-            },
+            }
             Instruction::CPY => {
                 let value = if let AddressingMode::Immediate = addressing_mode {
                     self.instruction_target as u8
@@ -372,7 +383,7 @@ impl CPU {
                 self.flags.zero = self.y == value;
                 self.flags.negative = self.y.wrapping_sub(value).get_bit(7);
                 false
-            },
+            }
             Instruction::DEC => {
                 let value = self.read(self.instruction_target);
                 let result = value.wrapping_sub(1);
@@ -380,19 +391,19 @@ impl CPU {
                 self.flags.zero = result == 0;
                 self.flags.negative = result.get_bit(7);
                 false
-            },
+            }
             Instruction::DEX => {
                 self.x = self.x.wrapping_sub(1);
                 self.flags.zero = self.x == 0;
                 self.flags.negative = self.x.get_bit(7);
                 false
-            },
+            }
             Instruction::DEY => {
                 self.y = self.y.wrapping_sub(1);
                 self.flags.zero = self.y == 0;
                 self.flags.negative = self.y.get_bit(7);
                 false
-            },
+            }
             Instruction::EOR => {
                 let value = if let AddressingMode::Immediate = addressing_mode {
                     self.instruction_target as u8
@@ -403,7 +414,7 @@ impl CPU {
                 self.flags.zero = self.a == 0;
                 self.flags.negative = self.a.get_bit(7);
                 true
-            },
+            }
             Instruction::INC => {
                 let value = self.read(self.instruction_target);
                 let result = value.wrapping_add(1);
@@ -411,29 +422,29 @@ impl CPU {
                 self.flags.zero = result == 0;
                 self.flags.negative = result.get_bit(7);
                 false
-            },
+            }
             Instruction::INX => {
                 self.x = self.x.wrapping_add(1);
                 self.flags.zero = self.x == 0;
                 self.flags.negative = self.x.get_bit(7);
                 false
-            },
+            }
             Instruction::INY => {
                 self.y = self.y.wrapping_add(1);
                 self.flags.zero = self.y == 0;
                 self.flags.negative = self.y.get_bit(7);
                 false
-            },
+            }
             Instruction::JMP => {
                 self.pc = self.instruction_target;
                 false
-            },
+            }
             Instruction::JSR => {
                 let pc_minus_one = self.pc.wrapping_sub(1);
                 self.push_u16(pc_minus_one);
                 self.pc = self.instruction_target;
                 false
-            },
+            }
             Instruction::LDA => {
                 let value = if let AddressingMode::Immediate = addressing_mode {
                     self.instruction_target as u8
@@ -444,7 +455,7 @@ impl CPU {
                 self.flags.zero = value == 0;
                 self.flags.negative = value.get_bit(7);
                 true
-            },
+            }
             Instruction::LDX => {
                 let value = if let AddressingMode::Immediate = addressing_mode {
                     self.instruction_target as u8
@@ -455,7 +466,7 @@ impl CPU {
                 self.flags.zero = value == 0;
                 self.flags.negative = value.get_bit(7);
                 true
-            },
+            }
             Instruction::LDY => {
                 let value = if let AddressingMode::Immediate = addressing_mode {
                     self.instruction_target as u8
@@ -466,7 +477,7 @@ impl CPU {
                 self.flags.zero = value == 0;
                 self.flags.negative = value.get_bit(7);
                 true
-            },
+            }
             Instruction::LSR => {
                 if let AddressingMode::Accumulator = addressing_mode {
                     self.flags.carry = self.a.get_bit(0);
@@ -482,7 +493,7 @@ impl CPU {
                     self.flags.negative = result.get_bit(7);
                 }
                 false
-            },
+            }
             Instruction::NOP => false,
             Instruction::ORA => {
                 let value = if let AddressingMode::Immediate = addressing_mode {
@@ -494,25 +505,29 @@ impl CPU {
                 self.flags.zero = self.a == 0;
                 self.flags.negative = self.a.get_bit(7);
                 true
-            },
+            }
             Instruction::PHA => {
                 self.push_u8(self.a);
                 false
-            },
+            }
             Instruction::PHP => {
-                self.push_u8(self.flags.to_byte());
+                let mut byte = self.flags.to_byte();
+                // Set B flag to 11
+                byte.set_bit(4, true);
+                byte.set_bit(5, true);
+                self.push_u8(byte);
                 false
-            },
+            }
             Instruction::PLA => {
                 self.a = self.pop_u8();
                 self.flags.zero = self.a == 0;
                 self.flags.negative = self.a.get_bit(7);
                 false
-            },
+            }
             Instruction::PLP => {
                 self.flags = CPUFlags::from_byte(self.pop_u8());
                 false
-            },
+            }
             Instruction::ROL => {
                 if let AddressingMode::Accumulator = addressing_mode {
                     let new_carry = self.a.get_bit(7);
@@ -532,7 +547,7 @@ impl CPU {
                     self.flags.negative = value.get_bit(7);
                 }
                 false
-            },
+            }
             Instruction::ROR => {
                 if let AddressingMode::Accumulator = addressing_mode {
                     let new_carry = self.a.get_bit(0);
@@ -552,33 +567,38 @@ impl CPU {
                     self.flags.negative = value.get_bit(7);
                 }
                 false
-            },
+            }
             Instruction::RTI => {
                 self.flags = CPUFlags::from_byte(self.pop_u8());
                 self.pc = self.pop_u16();
                 false
-            },
+            }
             Instruction::RTS => {
                 self.pc = self.pop_u16() + 1;
                 false
-            },
+            }
             Instruction::SBC => {
                 let value = if let AddressingMode::Immediate = addressing_mode {
                     self.instruction_target as u8
                 } else {
                     self.read(self.instruction_target)
                 };
-                let carry = !self.flags.carry as u8;
-                let will_carry = self.a.checked_sub(value)
-                    .and_then(|x| x.checked_sub(carry))
+                // Same as ADC but we invert the value
+                let value = !value;
+
+                let carry = self.flags.carry as u8;
+                let will_carry = self
+                    .a
+                    .checked_add(value)
+                    .and_then(|x| x.checked_add(carry))
                     .is_none();
 
                 let old_a = self.a;
-                self.a = self.a.wrapping_sub(value).wrapping_sub(carry);
+                self.a = self.a.wrapping_add(value).wrapping_add(carry);
 
-                self.flags.carry = !will_carry;
-                self.flags.overflow = old_a.get_bit(7) == value.get_bit(7)
-                    && old_a.get_bit(7) != self.a.get_bit(7);
+                self.flags.carry = will_carry;
+                self.flags.overflow =
+                    old_a.get_bit(7) == value.get_bit(7) && old_a.get_bit(7) != self.a.get_bit(7);
                 self.flags.zero = self.a == 0;
                 self.flags.negative = self.a.get_bit(7);
                 true
@@ -586,61 +606,61 @@ impl CPU {
             Instruction::SEC => {
                 self.flags.carry = true;
                 false
-            },
+            }
             Instruction::SED => {
                 self.flags.decimal_mode = true;
                 false
-            },
+            }
             Instruction::SEI => {
                 self.flags.interrupt_disable = true;
                 false
-            },
+            }
             Instruction::STA => {
                 self.write(self.instruction_target, self.a);
                 false
-            },
+            }
             Instruction::STX => {
                 self.write(self.instruction_target, self.x);
                 false
-            },
+            }
             Instruction::STY => {
                 self.write(self.instruction_target, self.y);
                 false
-            },
+            }
             Instruction::TAX => {
                 self.x = self.a;
                 self.flags.zero = self.x == 0;
                 self.flags.negative = self.x.get_bit(7);
                 false
-            },
+            }
             Instruction::TAY => {
                 self.y = self.a;
                 self.flags.zero = self.y == 0;
                 self.flags.negative = self.y.get_bit(7);
                 false
-            },
+            }
             Instruction::TSX => {
                 self.x = self.s;
                 self.flags.zero = self.x == 0;
                 self.flags.negative = self.x.get_bit(7);
                 false
-            },
+            }
             Instruction::TXA => {
                 self.a = self.x;
                 self.flags.zero = self.a == 0;
                 self.flags.negative = self.a.get_bit(7);
                 false
-            },
+            }
             Instruction::TXS => {
                 self.s = self.x;
                 false
-            },
+            }
             Instruction::TYA => {
                 self.a = self.y;
                 self.flags.zero = self.a == 0;
                 self.flags.negative = self.a.get_bit(7);
                 false
-            },
+            }
         }
     }
 
@@ -659,8 +679,10 @@ impl CPU {
             0x0000..=0x1FFF => &mut self.ram[address as usize & 0x07FF],
             0x2000..=0x3FFF => unimplemented!("PPU registers"),
             0x4000..=0x4017 => unimplemented!("APU and I/O registers"),
-            0x4018..=0x401F => unimplemented!("APU and I/O functionality that is normally disabled"),
-            0x4020..=0xFFFF => unimplemented!("Cartridge space"),
+            0x4018..=0x401F => {
+                unimplemented!("APU and I/O functionality that is normally disabled")
+            }
+            0x4020..=0xFFFF => &mut self.cartridge[address],
         }
     }
 

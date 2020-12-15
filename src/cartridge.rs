@@ -1,19 +1,20 @@
 use std::fs::File;
-use std::io::{Error, Read};
-use std::ops::RangeInclusive;
+use std::io::Read;
 use std::path::Path;
 
+use crate::mapper::{Mapper, Mapper0};
 use crate::util::BitOperations;
 
 #[derive(Debug)]
 pub struct Cartridge {
-    pub prg_rom: Vec<u8>,
-    pub chr_rom: Vec<u8>,
+    prg_rom: Vec<u8>,
+    chr_rom: Vec<u8>,
+    mapper: Box<dyn Mapper>,
 }
 
 impl Cartridge {
     pub fn from_file<P: AsRef<Path>>(filepath: P) -> Self {
-        let mut buffer = {
+        let buffer = {
             let mut file = File::open(filepath).unwrap();
             let mut buffer = vec![];
             file.read_to_end(&mut buffer).unwrap();
@@ -22,7 +23,7 @@ impl Cartridge {
         let (header, data) = buffer.split_at(16);
 
         if !header.starts_with(b"NES\x1A") {
-            return panic!("Not a NES file.");
+            panic!("Not a NES file.");
         }
 
         let prg_rom_size = {
@@ -80,6 +81,27 @@ impl Cartridge {
         Self {
             prg_rom: prg_rom.to_vec(),
             chr_rom: chr_rom.to_vec(),
+            mapper: {
+                if mapper_number == 0 {
+                    Box::new(Mapper0::new(prg_rom.len()))
+                } else {
+                    unimplemented!();
+                }
+            },
         }
+    }
+}
+
+impl std::ops::Index<u16> for Cartridge {
+    type Output = u8;
+
+    fn index(&self, address: u16) -> &Self::Output {
+        &self.prg_rom[self.mapper.address(address) as usize]
+    }
+}
+
+impl std::ops::IndexMut<u16> for Cartridge {
+    fn index_mut(&mut self, address: u16) -> &mut Self::Output {
+        &mut self.prg_rom[self.mapper.address(address) as usize]
     }
 }

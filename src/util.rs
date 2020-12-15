@@ -54,3 +54,24 @@ impl_bit_operations_for!(u8);
 impl_bit_operations_for!(u16);
 impl_bit_operations_for!(u32);
 impl_bit_operations_for!(u64);
+impl_bit_operations_for!(usize);
+
+pub trait Units {
+    #[allow(non_snake_case)]
+    fn KiB(&self) -> Self;
+}
+
+macro_rules! impl_units_for {
+    ($type: ty) => {
+        impl Units for $type {
+            fn KiB(&self) -> Self {
+                *self * 1024
+            }
+        }
+    };
+}
+
+impl_units_for!(u16);
+impl_units_for!(u32);
+impl_units_for!(u64);
+impl_units_for!(usize);

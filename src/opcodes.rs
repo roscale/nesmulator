@@ -1,11 +1,12 @@
 use crate::opcodes::AddressingMode::*;
 use crate::opcodes::Instruction::*;
 
+#[rustfmt::skip]
 pub const OPCODES: [(Instruction, AddressingMode, u8); 256] = [
     // 00
     (BRK, Immediate, 7), (ORA, IndexedIndirect, 6), (NOP, Implicit, 2), (NOP, Implicit, 8),
     (NOP, Implicit, 3), (ORA, ZeroPage, 3), (ASL, ZeroPage, 5), (NOP, Implicit, 5),
-    (PHP, Implicit, 3), (ORA, Immediate, 2), (ASL, Implicit, 2), (NOP, Implicit, 2),
+    (PHP, Implicit, 3), (ORA, Immediate, 2), (ASL, Accumulator, 2), (NOP, Implicit, 2),
     (NOP, Implicit, 4), (ORA, Absolute, 4), (ASL, Absolute, 6), (NOP, Implicit, 6),
     // 10
     (BPL, Relative, 2), (ORA, IndirectIndexed, 5), (NOP, Implicit, 2), (NOP, Implicit, 8),
@@ -15,7 +16,7 @@ pub const OPCODES: [(Instruction, AddressingMode, u8); 256] = [
     // 20
     (JSR, Absolute, 6), (AND, IndexedIndirect, 6), (NOP, Implicit, 2), (NOP, Implicit, 8),
     (BIT, ZeroPage, 3), (AND, ZeroPage, 3), (ROL, ZeroPage, 5), (NOP, Implicit, 5),
-    (PLP, Implicit, 4), (AND, Immediate, 2), (ROL, Implicit, 2), (NOP, Implicit, 2),
+    (PLP, Implicit, 4), (AND, Immediate, 2), (ROL, Accumulator, 2), (NOP, Implicit, 2),
     (BIT, Absolute, 4), (AND, Absolute, 4), (ROL, Absolute, 6), (NOP, Implicit, 6),
     // 30
     (BMI, Relative, 2), (AND, IndirectIndexed, 5), (NOP, Implicit, 2), (NOP, Implicit, 8),
@@ -25,7 +26,7 @@ pub const OPCODES: [(Instruction, AddressingMode, u8); 256] = [
     // 40
     (RTI, Implicit, 6), (EOR, IndexedIndirect, 6), (NOP, Implicit, 2), (NOP, Implicit, 8),
     (NOP, Implicit, 3), (EOR, ZeroPage, 3), (LSR, ZeroPage, 5), (NOP, Implicit, 5),
-    (PHA, Implicit, 3), (EOR, Immediate, 2), (LSR, Implicit, 2), (NOP, Implicit, 2),
+    (PHA, Implicit, 3), (EOR, Immediate, 2), (LSR, Accumulator, 2), (NOP, Implicit, 2),
     (JMP, Absolute, 3), (EOR, Absolute, 4), (LSR, Absolute, 6), (NOP, Implicit, 6),
     // 50
     (BVC, Relative, 2), (EOR, IndirectIndexed, 5), (NOP, Implicit, 2), (NOP, Implicit, 8),
@@ -35,7 +36,7 @@ pub const OPCODES: [(Instruction, AddressingMode, u8); 256] = [
     // 60
     (RTS, Implicit, 6), (ADC, IndexedIndirect, 6), (NOP, Implicit, 2), (NOP, Implicit, 8),
     (NOP, Implicit, 3), (ADC, ZeroPage, 3), (ROR, ZeroPage, 5), (NOP, Implicit, 5),
-    (PLA, Implicit, 4), (ADC, Immediate, 2), (ROR, Implicit, 2), (NOP, Implicit, 2),
+    (PLA, Implicit, 4), (ADC, Immediate, 2), (ROR, Accumulator, 2), (NOP, Implicit, 2),
     (JMP, Indirect, 5), (ADC, Absolute, 4), (ROR, Absolute, 6), (NOP, Implicit, 6),
     // 70
     (BVS, Relative, 2), (ADC, IndirectIndexed, 5), (NOP, Implicit, 2), (NOP, Implicit, 8),
@@ -84,69 +85,16 @@ pub const OPCODES: [(Instruction, AddressingMode, u8); 256] = [
     (NOP, Implicit, 4), (SBC, AbsoluteIndexedX, 4), (INC, AbsoluteIndexedX, 7), (NOP, Implicit, 7),
 ];
 
-#[derive(Copy, Clone)]
-#[allow(dead_code)]
+#[derive(Debug, Copy, Clone)]
+#[rustfmt::skip]
 pub enum Instruction {
-    ADC,
-    AND,
-    ASL,
-    BCC,
-    BCS,
-    BEQ,
-    BIT,
-    BMI,
-    BNE,
-    BPL,
-    BRK,
-    BVC,
-    BVS,
-    CLC,
-    CLD,
-    CLI,
-    CLV,
-    CMP,
-    CPX,
-    CPY,
-    DEC,
-    DEX,
-    DEY,
-    EOR,
-    INC,
-    INX,
-    INY,
-    JMP,
-    JSR,
-    LDA,
-    LDX,
-    LDY,
-    LSR,
-    NOP,
-    ORA,
-    PHA,
-    PHP,
-    PLA,
-    PLP,
-    ROL,
-    ROR,
-    RTI,
-    RTS,
-    SBC,
-    SEC,
-    SED,
-    SEI,
-    STA,
-    STX,
-    STY,
-    TAX,
-    TAY,
-    TSX,
-    TXA,
-    TXS,
-    TYA,
+    ADC, AND, ASL, BCC, BCS, BEQ, BIT, BMI, BNE, BPL, BRK, BVC, BVS, CLC,
+    CLD, CLI, CLV, CMP, CPX, CPY, DEC, DEX, DEY, EOR, INC, INX, INY, JMP, 
+    JSR, LDA, LDX, LDY, LSR, NOP, ORA, PHA, PHP, PLA, PLP, ROL, ROR, RTI, 
+    RTS, SBC, SEC, SED, SEI, STA, STX, STY, TAX, TAY, TSX, TXA, TXS, TYA,
 }
 
-#[derive(Copy, Clone)]
-#[allow(dead_code)]
+#[derive(Debug, Copy, Clone)]
 pub enum AddressingMode {
     Implicit,
     Accumulator,

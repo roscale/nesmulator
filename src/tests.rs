@@ -28,7 +28,10 @@ mod tests {
     fn zero_page_indexed_x() {
         let mut cpu = CPU::new([42].to_vec());
         cpu.x = 1;
-        assert_eq!(cpu.compute_instruction_target(AddressingMode::ZeroPageIndexedX), 0);
+        assert_eq!(
+            cpu.compute_instruction_target(AddressingMode::ZeroPageIndexedX),
+            0
+        );
         assert_eq!(cpu.instruction_target, 43);
         assert_eq!(cpu.pc, 1);
     }
@@ -37,7 +40,10 @@ mod tests {
     fn zero_page_indexed_y() {
         let mut cpu = CPU::new([42].to_vec());
         cpu.y = 1;
-        assert_eq!(cpu.compute_instruction_target(AddressingMode::ZeroPageIndexedY), 0);
+        assert_eq!(
+            cpu.compute_instruction_target(AddressingMode::ZeroPageIndexedY),
+            0
+        );
         assert_eq!(cpu.instruction_target, 43);
         assert_eq!(cpu.pc, 1);
     }
@@ -75,14 +81,20 @@ mod tests {
         // Without page crossing
         let mut cpu = CPU::new([0xCD, 0xAB].to_vec());
         cpu.x = 1;
-        assert_eq!(cpu.compute_instruction_target(AddressingMode::AbsoluteIndexedX), 0);
+        assert_eq!(
+            cpu.compute_instruction_target(AddressingMode::AbsoluteIndexedX),
+            0
+        );
         assert_eq!(cpu.pc, 2);
         assert_eq!(cpu.instruction_target, 0xABCE);
 
         // With page crossing
         let mut cpu = CPU::new([0xFF, 0xAB].to_vec());
         cpu.x = 1;
-        assert_eq!(cpu.compute_instruction_target(AddressingMode::AbsoluteIndexedX), 1);
+        assert_eq!(
+            cpu.compute_instruction_target(AddressingMode::AbsoluteIndexedX),
+            1
+        );
         assert_eq!(cpu.pc, 2);
         assert_eq!(cpu.instruction_target, 0xAC00);
     }
@@ -92,14 +104,20 @@ mod tests {
         // Without page crossing
         let mut cpu = CPU::new([0xCD, 0xAB].to_vec());
         cpu.y = 1;
-        assert_eq!(cpu.compute_instruction_target(AddressingMode::AbsoluteIndexedY), 0);
+        assert_eq!(
+            cpu.compute_instruction_target(AddressingMode::AbsoluteIndexedY),
+            0
+        );
         assert_eq!(cpu.pc, 2);
         assert_eq!(cpu.instruction_target, 0xABCE);
 
         // With page crossing
         let mut cpu = CPU::new([0xFF, 0xAB].to_vec());
         cpu.y = 1;
-        assert_eq!(cpu.compute_instruction_target(AddressingMode::AbsoluteIndexedY), 1);
+        assert_eq!(
+            cpu.compute_instruction_target(AddressingMode::AbsoluteIndexedY),
+            1
+        );
         assert_eq!(cpu.pc, 2);
         assert_eq!(cpu.instruction_target, 0xAC00);
     }
@@ -120,7 +138,10 @@ mod tests {
         cpu.x = 4;
         cpu.ram[0x07] = 0xCD;
         cpu.ram[0x08] = 0xAB;
-        assert_eq!(cpu.compute_instruction_target(AddressingMode::IndexedIndirect), 0);
+        assert_eq!(
+            cpu.compute_instruction_target(AddressingMode::IndexedIndirect),
+            0
+        );
         assert_eq!(cpu.pc, 1);
         assert_eq!(cpu.instruction_target, 0xABCD);
     }
@@ -132,7 +153,10 @@ mod tests {
         cpu.ram[0x03] = 0xCD;
         cpu.ram[0x04] = 0x00;
         cpu.y = 2;
-        assert_eq!(cpu.compute_instruction_target(AddressingMode::IndirectIndexed), 0);
+        assert_eq!(
+            cpu.compute_instruction_target(AddressingMode::IndirectIndexed),
+            0
+        );
         assert_eq!(cpu.pc, 1);
         assert_eq!(cpu.instruction_target, 0x00CF);
 
@@ -141,7 +165,10 @@ mod tests {
         cpu.ram[0x03] = 0xCD;
         cpu.ram[0x04] = 0xAB;
         cpu.y = 2;
-        assert_eq!(cpu.compute_instruction_target(AddressingMode::IndirectIndexed), 1);
+        assert_eq!(
+            cpu.compute_instruction_target(AddressingMode::IndirectIndexed),
+            1
+        );
         assert_eq!(cpu.pc, 1);
         assert_eq!(cpu.instruction_target, 0xABCF);
     }
@@ -152,11 +179,7 @@ mod tests {
 
     #[test]
     fn adc() {
-        let mut cpu = CPU::new([
-            0x69, 1,
-            0x69, 1,
-            0x69, 1,
-        ].to_vec());
+        let mut cpu = CPU::new([0x69, 1, 0x69, 1, 0x69, 1].to_vec());
 
         cpu.a = 0;
         cpu.execute_next_instruction();
