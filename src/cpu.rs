@@ -20,21 +20,23 @@ pub struct CPU {
 
 impl CPU {
     pub fn new(cartridge: Cartridge) -> Self {
-        Self {
+        let mut cpu = Self {
             a: 0,
             x: 0,
             y: 0,
             pc: 0,
-            s: 0xFF,
+            s: 0,
             flags: CPUFlags::new(),
             ram: [0; 0x800],
             cartridge,
             instruction_target: 0,
             cycles_remaining: 0,
-        }
+        };
+        cpu.reset();
+        cpu
     }
 
-    pub fn run(&mut self) {
+    pub fn trigger_clock_cycle(&mut self) {
         if self.cycles_remaining > 0 {
             self.cycles_remaining -= 1;
             return;
@@ -43,24 +45,75 @@ impl CPU {
         self.cycles_remaining -= 1;
     }
 
-    pub fn execute_next_instruction(&mut self) {
-        let op = self.read(self.pc);
-        print!("self.pc = {:x}", self.pc);
-
-        if self.ram[0] != 0 {
-            println!("BOGUS");
+    pub fn irq(&mut self) {
+        if self.flags.interrupt_disable {
+            return;
         }
 
+        self.push_u16(self.pc);
+
+        let mut byte = self.flags.to_byte();
+        // Set B flag to 10, hardware interrupt
+        byte.set_bit(4, false);
+        byte.set_bit(5, true);
+        self.push_u8(byte);
+
+        // Ignore further interrupts
+        self.flags.interrupt_disable = true;
+
+        // Load the IRQ interrupt
+        self.pc = {
+            let lsb = self.read(0xFFFE);
+            let msb = self.read(0xFFFF);
+            u16::from_le_bytes([lsb, msb])
+        };
+    }
+
+    pub fn nmi(&mut self) {
+        self.push_u16(self.pc);
+
+        let mut byte = self.flags.to_byte();
+        // Set B flag to 10, hardware interrupt
+        byte.set_bit(4, false);
+        byte.set_bit(5, true);
+        self.push_u8(byte);
+
+        // Ignore further interrupts
+        self.flags.interrupt_disable = true;
+
+        // Load the IRQ interrupt
+        self.pc = {
+            let lsb = self.read(0xFFFA);
+            let msb = self.read(0xFFFB);
+            u16::from_le_bytes([lsb, msb])
+        };
+    }
+
+    pub fn reset(&mut self) {
+        self.s = self.s.wrapping_sub(3);
+        self.flags.interrupt_disable = true;
+        // Load the IRQ interrupt
+        self.pc = {
+            let lsb = self.read(0xFFFC);
+            let msb = self.read(0xFFFD);
+            u16::from_le_bytes([lsb, msb])
+        };
+    }
+
+    pub fn execute_next_instruction(&mut self) {
+        print!("{:04X}", self.pc);
+
+        let op = self.read(self.pc);
         self.pc += 1;
         let (instruction, addressing_mode, cycles) = OPCODES[op as usize];
 
-        println!("   OP = {:?}", instruction);
+        println!("  {:?}", instruction);
 
         self.cycles_remaining = cycles;
         let additional_cycles = self.compute_instruction_target(addressing_mode);
         let can_take_more_cycles = self.execute_instruction(instruction, addressing_mode);
 
-        // Some instructions don't take more cycles when a new page is crossed.
+        // Some instructions don't consume more cycles when a new page is crossed.
         if can_take_more_cycles {
             self.cycles_remaining += additional_cycles;
         }
@@ -155,17 +208,24 @@ impl CPU {
                 }
             }
             AddressingMode::Indirect => {
-                let addr = {
+                let (addr, lsb) = {
                     let lsb = self.read(self.pc);
                     self.pc += 1;
                     let msb = self.read(self.pc);
                     self.pc += 1;
-                    u16::from_le_bytes([lsb, msb])
+                    (u16::from_le_bytes([lsb, msb]), lsb)
                 };
                 let addr = {
-                    let lsb = self.read(addr);
-                    let msb = self.read(addr + 1);
-                    u16::from_le_bytes([lsb, msb])
+                    // Hardware bug
+                    if lsb == 0xFF {
+                        let lsb = self.read(addr);
+                        let msb = self.read(addr & 0xFF00);
+                        u16::from_le_bytes([lsb, msb])
+                    } else {
+                        let lsb = self.read(addr);
+                        let msb = self.read(addr + 1);
+                        u16::from_le_bytes([lsb, msb])
+                    }
                 };
                 self.instruction_target = addr;
                 0
@@ -308,8 +368,20 @@ impl CPU {
                 true
             }
             Instruction::BRK => {
+                if self.flags.interrupt_disable {
+                    return false;
+                }
+
                 self.push_u16(self.pc);
-                self.push_u8(self.flags.to_byte());
+
+                let mut byte = self.flags.to_byte();
+                // Set B flag to 11, software interrupt
+                byte.set_bit(4, true);
+                byte.set_bit(5, true);
+                self.push_u8(byte);
+
+                // Ignore further interrupts
+                self.flags.interrupt_disable = true;
 
                 // Load the IRQ interrupt
                 self.pc = {
@@ -317,8 +389,6 @@ impl CPU {
                     let msb = self.read(0xFFFF);
                     u16::from_le_bytes([lsb, msb])
                 };
-
-                self.flags.break_command = 1;
                 false
             }
             Instruction::BVC => {
@@ -693,8 +763,8 @@ impl CPU {
 
     pub fn push_u16(&mut self, value: u16) {
         let [lsb, msb] = value.to_le_bytes();
-        self.push_u8(lsb);
         self.push_u8(msb);
+        self.push_u8(lsb);
     }
 
     pub fn pop_u8(&mut self) -> u8 {
@@ -703,8 +773,8 @@ impl CPU {
     }
 
     pub fn pop_u16(&mut self) -> u16 {
-        let msb = self.pop_u8();
         let lsb = self.pop_u8();
+        let msb = self.pop_u8();
         u16::from_le_bytes([lsb, msb])
     }
 }

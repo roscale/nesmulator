@@ -21,16 +21,11 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Begin NES file decoding">
-      <change afterPath="$PROJECT_DIR$/src/mapper.rs" afterDir="false" />
+    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Fix a few instruction bugs thanks to nestest.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cartridge.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/cartridge.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cpu.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpu.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/flags.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/flags.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/opcodes.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/opcodes.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tests.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/util.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/util.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,12 +58,14 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/nestest.log" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
-    <property name="settings.editor.selected.configurable" value="language.rust.cargo" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.pyOptions" />
+    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/nestest.log" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -165,7 +162,18 @@
       <workItem from="1607982456007" duration="11871000" />
       <workItem from="1608051569396" duration="81000" />
       <workItem from="1608051669766" duration="929000" />
-      <workItem from="1608052614599" duration="2487000" />
+      <workItem from="1608052614599" duration="7219000" />
+      <workItem from="1608075231408" duration="1175000" />
+      <workItem from="1608079133956" duration="3404000" />
+      <workItem from="1608309324358" duration="13000" />
+      <workItem from="1608309355832" duration="610000" />
+      <workItem from="1608312370563" duration="33000" />
+      <workItem from="1608312422364" duration="7311000" />
+      <workItem from="1608410353510" duration="195000" />
+      <workItem from="1608414272000" duration="98000" />
+      <workItem from="1608414501460" duration="618000" />
+      <workItem from="1608427692140" duration="2301000" />
+      <workItem from="1608470190839" duration="4032000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1606756223933</created>
@@ -230,7 +238,14 @@
       <option name="project" value="LOCAL" />
       <updated>1607983478391</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Fix a few instruction bugs thanks to nestest.">
+      <created>1608055204192</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1608055204192</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -258,18 +273,8 @@
     <MESSAGE value="Finish instruction implementation &amp; inline some functions&#10;&#10;The opcode table is not completed yet." />
     <MESSAGE value="Complete the opcode table" />
     <MESSAGE value="Begin NES file decoding" />
-    <option name="LAST_COMMIT_MESSAGE" value="Begin NES file decoding" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/cpu.rs</url>
-          <line>50</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Fix a few instruction bugs thanks to nestest." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix a few instruction bugs thanks to nestest." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

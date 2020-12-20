@@ -15,7 +15,7 @@ fn main() {
     cpu.pc = 0xc000;
 
     loop {
-        cpu.run();
+        cpu.trigger_clock_cycle();
     }
 
     // dbg!(&cartridge);
