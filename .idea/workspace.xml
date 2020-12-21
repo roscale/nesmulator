@@ -21,10 +21,12 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Fix a few instruction bugs thanks to nestest.">
+    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Bug fixes &amp; hardware interrupts">
+      <change afterPath="$PROJECT_DIR$/misc/nestest.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/disassembler.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/roms/nestest.nes" beforeDir="false" afterPath="$PROJECT_DIR$/misc/nestest.nes" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cpu.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpu.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/flags.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/flags.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -58,20 +60,21 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/nestest.log" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/my.log" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.pyOptions" />
-    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/nestest.log" />
+    <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/my.log" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/misc" />
       <recent name="$PROJECT_DIR$/roms" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/src" />
@@ -109,11 +112,6 @@
       <option name="redirectInputPath" value="" />
       <method v="2">
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <list>
@@ -173,7 +171,9 @@
       <workItem from="1608414272000" duration="98000" />
       <workItem from="1608414501460" duration="618000" />
       <workItem from="1608427692140" duration="2301000" />
-      <workItem from="1608470190839" duration="4032000" />
+      <workItem from="1608470190839" duration="10397000" />
+      <workItem from="1608482213643" duration="1251000" />
+      <workItem from="1608505180380" duration="5228000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1606756223933</created>
@@ -245,7 +245,14 @@
       <option name="project" value="LOCAL" />
       <updated>1608055204192</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Bug fixes &amp; hardware interrupts">
+      <created>1608474432792</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1608474432792</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -274,7 +281,8 @@
     <MESSAGE value="Complete the opcode table" />
     <MESSAGE value="Begin NES file decoding" />
     <MESSAGE value="Fix a few instruction bugs thanks to nestest." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix a few instruction bugs thanks to nestest." />
+    <MESSAGE value="Bug fixes &amp; hardware interrupts" />
+    <option name="LAST_COMMIT_MESSAGE" value="Bug fixes &amp; hardware interrupts" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

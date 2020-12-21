@@ -36,7 +36,7 @@ impl CPU {
         cpu
     }
 
-    pub fn trigger_clock_cycle(&mut self) {
+    pub fn clock(&mut self) {
         if self.cycles_remaining > 0 {
             self.cycles_remaining -= 1;
             return;
@@ -101,13 +101,11 @@ impl CPU {
     }
 
     pub fn execute_next_instruction(&mut self) {
-        print!("{:04X}", self.pc);
+        self.disassemble_current_instruction();
 
         let op = self.read(self.pc);
         self.pc += 1;
         let (instruction, addressing_mode, cycles) = OPCODES[op as usize];
-
-        println!("  {:?}", instruction);
 
         self.cycles_remaining = cycles;
         let additional_cycles = self.compute_instruction_target(addressing_mode);
