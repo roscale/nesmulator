@@ -21,13 +21,14 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Bug fixes &amp; hardware interrupts">
-      <change afterPath="$PROJECT_DIR$/misc/nestest.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/disassembler.rs" afterDir="false" />
+    <list default="true" id="5aff0b3e-4749-4397-8c26-1490b2880ee8" name="Default Changelist" comment="Implemented a disassembler to compare with emulator logs&#10;&#10;All legal instructions work correctly.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/roms/nestest.nes" beforeDir="false" afterPath="$PROJECT_DIR$/misc/nestest.nes" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/nestest.log" beforeDir="false" afterPath="$PROJECT_DIR$/misc/nestest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cartridge.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/cartridge.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cpu.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpu.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/disassembler.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/disassembler.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +67,7 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.pyOptions" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.CommitDialog" />
     <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/my.log" />
   </component>
   <component name="RecentsManager">
@@ -86,6 +87,25 @@
     </option>
   </component>
   <component name="RunManager" selected="Cargo.Run">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Run release" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="command" value="run --package nesmulator --bin nesmulator --release" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="channel" value="DEFAULT" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Run" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="command" value="run --package nesmulator --bin nesmulator" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -100,8 +120,8 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test tests::tests" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package nesmulator --bin nesmulator tests::tests" />
+    <configuration name="Test tests::cpu" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package nesmulator --bin nesmulator tests::cpu" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <option name="channel" value="DEFAULT" />
       <option name="allFeatures" value="false" />
@@ -116,11 +136,12 @@
     </configuration>
     <list>
       <item itemvalue="Cargo.Run" />
-      <item itemvalue="Cargo.Test tests::tests" />
+      <item itemvalue="Cargo.Run release" />
+      <item itemvalue="Cargo.Test tests::cpu" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Cargo.Test tests::tests" />
+        <item itemvalue="Cargo.Test tests::cpu" />
       </list>
     </recent_temporary>
   </component>
@@ -173,7 +194,10 @@
       <workItem from="1608427692140" duration="2301000" />
       <workItem from="1608470190839" duration="10397000" />
       <workItem from="1608482213643" duration="1251000" />
-      <workItem from="1608505180380" duration="5228000" />
+      <workItem from="1608505180380" duration="5654000" />
+      <workItem from="1608652649753" duration="11000" />
+      <workItem from="1608845003996" duration="3836000" />
+      <workItem from="1608855363885" duration="844000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1606756223933</created>
@@ -252,7 +276,14 @@
       <option name="project" value="LOCAL" />
       <updated>1608474432792</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Implemented a disassembler to compare with emulator logs&#10;&#10;All legal instructions work correctly.">
+      <created>1608588097612</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1608588097612</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -271,6 +302,7 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="true" />
     <MESSAGE value="First commit" />
     <MESSAGE value="Implement all addressing modes" />
     <MESSAGE value="Implemented a few instructions and rearranged some functions" />
@@ -282,7 +314,8 @@
     <MESSAGE value="Begin NES file decoding" />
     <MESSAGE value="Fix a few instruction bugs thanks to nestest." />
     <MESSAGE value="Bug fixes &amp; hardware interrupts" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bug fixes &amp; hardware interrupts" />
+    <MESSAGE value="Implemented a disassembler to compare with emulator logs&#10;&#10;All legal instructions work correctly." />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented a disassembler to compare with emulator logs&#10;&#10;All legal instructions work correctly." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -16,6 +16,9 @@ pub struct CPU {
 
     pub instruction_target: u16,
     pub cycles_remaining: u8,
+
+    pub(crate) enable_logging: bool,
+    pub(crate) logs: String,
 }
 
 impl CPU {
@@ -31,6 +34,8 @@ impl CPU {
             cartridge,
             instruction_target: 0,
             cycles_remaining: 0,
+            enable_logging: false,
+            logs: String::new(),
         };
         cpu.reset();
         cpu
@@ -101,7 +106,9 @@ impl CPU {
     }
 
     pub fn execute_next_instruction(&mut self) {
-        self.disassemble_current_instruction();
+        if self.enable_logging {
+            self.disassemble_and_log_current_instruction();
+        }
 
         let op = self.read(self.pc);
         self.pc += 1;

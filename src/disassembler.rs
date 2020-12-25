@@ -1,12 +1,14 @@
+use std::fmt::Write;
+
 use crate::cpu::CPU;
 use crate::opcodes::{AddressingMode, Instruction, OPCODES};
 
 impl CPU {
-    pub fn disassemble_current_instruction(&mut self) {
+    pub fn disassemble_and_log_current_instruction(&mut self) {
         let op = self.read(self.pc);
         let (instruction, addressing_mode, _) = OPCODES[op as usize];
 
-        print!("{:04X}  ", self.pc);
+        write!(self.logs, "{:04X}  ", self.pc).unwrap();
 
         let bytes = match addressing_mode {
             AddressingMode::Implicit => 1,
@@ -28,9 +30,9 @@ impl CPU {
         for i in 0..bytes {
             bytes_str += &format!("{:02X} ", self.read(self.pc + i));
         }
-        print!("{:<10}", bytes_str);
+        write!(self.logs, "{:<10}", bytes_str).unwrap();
 
-        print!("{:?} ", instruction);
+        write!(self.logs, "{:?} ", instruction).unwrap();
 
         let pc = self.pc + 1;
         let arg = match addressing_mode {
@@ -157,23 +159,29 @@ impl CPU {
             }
         };
 
-        print!("{:<28}", arg);
+        write!(self.logs, "{:<28}", arg).unwrap();
 
-        print!(
+        write!(
+            self.logs,
             "A:{:02X} X:{:02X} Y:{:02X} P:{:02X} SP:{:02X}",
             self.a,
             self.x,
             self.y,
             self.flags.to_byte(),
             self.s
-        );
+        )
+        .unwrap();
 
-        println!();
+        writeln!(self.logs).unwrap();
     }
 
     pub fn read_u16(&mut self, address: u16) -> u16 {
         let lsb = self.read(address);
         let msb = self.read(address + 1);
         u16::from_le_bytes([lsb, msb])
+    }
+
+    pub fn enable_logging(&mut self, enable: bool) {
+        self.enable_logging = enable;
     }
 }

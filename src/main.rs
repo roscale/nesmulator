@@ -15,7 +15,7 @@ fn main() {
     let mut cpu = CPU::new(cartridge);
     cpu.pc = 0xc000;
 
-    loop {
+    while cpu.pc != 0xC6BD {
         cpu.clock();
     }
 }

@@ -82,10 +82,9 @@ impl Cartridge {
             prg_rom: prg_rom.to_vec(),
             chr_rom: chr_rom.to_vec(),
             mapper: {
-                if mapper_number == 0 {
-                    Box::new(Mapper0::new(prg_rom.len()))
-                } else {
-                    unimplemented!();
+                match mapper_number {
+                    0 => Box::new(Mapper0::new(prg_rom.len())),
+                    _ => unimplemented!(),
                 }
             },
         }
